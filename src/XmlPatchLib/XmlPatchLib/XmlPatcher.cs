@@ -12,13 +12,13 @@ namespace Tizuby.XmlPatchLib
 {
     public class XmlPatcher
     {
+        protected string RootElementName { get; }
+
         // TODO: Instead of taking the string for the root name itself, use some type of extendable system to allow differing methods, such as <patch></patch> (RFC 7351). Default should always be <diff>. Some type of lookup table?
         public XmlPatcher(string rootElementName = "diff")
         {
             this.RootElementName = rootElementName;
         }
-
-        protected string RootElementName { get; }
 
         /// <summary>
         ///     Attempts to patch the given XML document using the given diff xml document.
@@ -43,22 +43,27 @@ namespace Tizuby.XmlPatchLib
                 throw new InvalidDataException("The patch document's root is null");
 
             // TODO: Use a validator on the diff doc. Any original doc is considered valid.
-            // ^ So long as the roots match up, just append all children to the source.
-            // For now, assume the structure is good.
-            // First get a list of all the add/replace/remove elements.
-            var addOperations = diffDoc.Root.Elements("add");
-            var replaceOperations = diffDoc.Root.Elements("replace");
-            var removeOperations = diffDoc.Root.Elements("remove");
 
             var exceptionList = new List<Exception>();
 
-            var addNodeExceptions = this.RunOperation(this.PatchAddNode, originalDoc, addOperations, useBestEffort);
-            var replaceNodeExceptions = this.RunOperation(this.PatchReplaceNode, originalDoc, replaceOperations, useBestEffort);
-            var removeNodeExceptions = this.RunOperation(this.PatchRemoveNode, originalDoc, removeOperations, useBestEffort);
-
-            exceptionList.AddRange(addNodeExceptions);
-            exceptionList.AddRange(replaceNodeExceptions);
-            exceptionList.AddRange(removeNodeExceptions);
+            foreach (var operationElement in diffDoc.Root.Elements())
+            {
+                Action<XDocument, XElement> operation = null;
+                switch (operationElement.Name.LocalName)
+                {
+                    case "add":
+                        operation = this.PatchAddNode;
+                        break;
+                    case "replace":
+                        operation = this.PatchReplaceNode;
+                        break;
+                    case "remove":
+                        operation = this.PatchRemoveNode;
+                        break;
+                }
+                if (operation != null)
+                    RunOperation(operation, originalDoc, operationElement, useBestEffort, exceptionList);
+            }
 
             return exceptionList;
         }
@@ -115,25 +120,19 @@ namespace Tizuby.XmlPatchLib
             }
         }
 
-        private IEnumerable<Exception> RunOperation(Action<XDocument, XElement> operation, XDocument originalDoc, IEnumerable<XElement> operationElements, bool useBestEffort)
+        private static void RunOperation(Action<XDocument, XElement> operation, XDocument originalDoc, XElement operationElement, bool useBestEffort, ICollection<Exception> exceptionList)
         {
-            var result = new List<Exception>();
-            foreach (var element in operationElements)
+            try
             {
-                try
-                {
-                    operation.Invoke(originalDoc, element);
-                }
-                catch (Exception ex) when (ex is XmlException || ex is XPathException || ex is XPath2Exception)
-                {
-                    if (useBestEffort)
-                        result.Add(ex);
-                    else
-                        throw;
-                }
+                operation.Invoke(originalDoc, operationElement);
             }
-
-            return result;
+            catch (Exception ex) when (ex is XmlException || ex is XPathException || ex is XPath2Exception)
+            {
+                if (useBestEffort)
+                    exceptionList.Add(ex);
+                else
+                    throw;
+            }
         }
 
         private string GetXPath(XElement element)
