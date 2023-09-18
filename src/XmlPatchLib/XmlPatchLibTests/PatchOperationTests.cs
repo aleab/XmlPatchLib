@@ -1,10 +1,7 @@
-﻿using System;
-using System.Linq;
-using System.Xml;
+﻿using System.Linq;
 using System.Xml.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Tizuby.XmlPatchLib;
-using Wmhelp.XPath2;
 
 namespace XmlPatchLibTests
 {
@@ -23,7 +20,7 @@ namespace XmlPatchLibTests
             // Act
             patcher.PatchXml(source, diff);
 
-            var newChild = source.Element("original").Element("main").Element("child3");
+            var newChild = source.Element("original")?.Element("main")?.Element("child3");
 
             // Assert
             Assert.IsNotNull(newChild);
@@ -42,7 +39,7 @@ namespace XmlPatchLibTests
             patcher.PatchXml(source, diff);
 
             //Assert
-            var newChildParent = source.Element("original").Element("main").Element("child3");
+            var newChildParent = source.Element("original")?.Element("main")?.Element("child3");
 
             Assert.IsNotNull(newChildParent);
             Assert.AreEqual(2, newChildParent.Elements().Count());
@@ -92,10 +89,10 @@ namespace XmlPatchLibTests
             // Act
             patcher.PatchXml(source, diff);
 
-            var targetNode = source.Root.Element("main").Element("child1");
+            var targetNode = source.Root?.Element("main")?.Element("child1");
 
             // Assert
-            Assert.AreEqual(expectedText, targetNode.Value);
+            Assert.AreEqual(expectedText, targetNode?.Value);
         }
 
         [TestMethod]
@@ -104,15 +101,15 @@ namespace XmlPatchLibTests
             // Arrange
             var source = XDocument.Load(@"TestingXmls\TestOriginalSource1.xml");
             var diff = XDocument.Load(@"TestingXmls\ReplaceAttribute.xml");
-            var expectedText = "NewTestValue";
+            const string expectedText = "NewTestValue";
 
             var patcher = new XmlPatcher();
 
             // Act
             patcher.PatchXml(source, diff);
 
-            var targetNode = source.Root.Element("attributedNode");
-            var attributeVal = targetNode.Attribute("test").Value;
+            var targetNode = source.Root?.Element("attributedNode");
+            var attributeVal = targetNode?.Attribute("test")?.Value;
 
             // Assert
             Assert.AreEqual(expectedText, attributeVal);
@@ -130,7 +127,7 @@ namespace XmlPatchLibTests
             // Act
             patcher.PatchXml(source, diff);
 
-            var targetNode = source.Root.Element("main").Element("child2");
+            var targetNode = source.Root?.Element("main")?.Element("child2");
 
             // Assert
             Assert.IsNull(targetNode);
@@ -148,9 +145,10 @@ namespace XmlPatchLibTests
             // Act
             patcher.PatchXml(source, diff);
 
-            var targetNode = source.Root.Element("attributedNode");
+            var targetNode = source.Root?.Element("attributedNode");
 
             // Assert
+            Assert.IsNotNull(targetNode);
             Assert.IsFalse(targetNode.HasAttributes);
         }
     }
