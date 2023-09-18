@@ -61,6 +61,7 @@ namespace Tizuby.XmlPatchLib
                         operation = this.PatchRemoveNode;
                         break;
                 }
+
                 if (operation != null)
                     RunOperation(operation, originalDoc, operationElement, useBestEffort, exceptionList);
             }
@@ -70,23 +71,23 @@ namespace Tizuby.XmlPatchLib
 
         protected void PatchAddNode(XDocument originalDoc, XElement addElement)
         {
-            var xpath = this.GetXPath(addElement);
-            var targetElement = this.GetSingleTargetNode<XElement>(originalDoc, xpath);
+            var xpath = GetXPath(addElement);
+            var targetElement = GetSingleTargetNode<XElement>(originalDoc, xpath);
             var typeAttribute = addElement.Attribute("type");
 
             // If there's a type attribute, it means the add operation is adding an attribute to the target element.
             if (typeAttribute != null)
-                this.PatchAddAttribute(targetElement, typeAttribute, addElement);
+                PatchAddAttribute(targetElement, typeAttribute, addElement);
             else
-                this.PatchNormalAdd(targetElement, addElement);
+                PatchNormalAdd(targetElement, addElement);
         }
 
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
+        [SuppressMessage("ReSharper", "PossibleNullReferenceException", Justification = "This method is expected to throw exceptions if the target node is not found")]
         protected void PatchReplaceNode(XDocument originalDoc, XElement replaceElement)
         {
-            var xpath = this.GetXPath(replaceElement);
+            var xpath = GetXPath(replaceElement);
 
-            var targetXObject = this.GetSingleTargetNode<XObject>(originalDoc, xpath);
+            var targetXObject = GetSingleTargetNode<XObject>(originalDoc, xpath);
 
             if (targetXObject.NodeType == XmlNodeType.Attribute)
             {
@@ -100,13 +101,13 @@ namespace Tizuby.XmlPatchLib
             }
         }
 
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
+        [SuppressMessage("ReSharper", "PossibleNullReferenceException", Justification = "This method is expected to throw exceptions if the target node is not found")]
         protected void PatchRemoveNode(XDocument originalDoc, XElement removalElement)
         {
             // TODO: Support ws removal for sibling whitespace nodes.
-            var xpath = this.GetXPath(removalElement);
+            var xpath = GetXPath(removalElement);
 
-            var targetXObject = this.GetSingleTargetNode<XObject>(originalDoc, xpath);
+            var targetXObject = GetSingleTargetNode<XObject>(originalDoc, xpath);
 
             if (targetXObject.NodeType == XmlNodeType.Attribute)
             {
@@ -135,31 +136,16 @@ namespace Tizuby.XmlPatchLib
             }
         }
 
-        private string GetXPath(XElement element)
-        {
-            // TODO: Validate XPath by taking an IXPathValidator in the constructor? Not really a rush since invalid xpath should throw an exception when used.
-            var xPathAttribute = element.Attribute("sel");
-
-            if (xPathAttribute == null)
-                throw new XmlException("sel attribute does not exist! All patch operations must include a 'sel' attribute! element:" + element);
-
-            var result = xPathAttribute.Value;
-
-            if (string.IsNullOrWhiteSpace(result))
-                throw new XPathException("Invalid xpath. The value of the sel attribute was empty or all whitespace. element: " + element);
-
-            return result;
-        }
-
-        private T GetSingleTargetNode<T>(XNode doc, string xpath) where T : XObject
+        /// <exception cref="XPathException"></exception>
+        /// <exception cref="XmlException"></exception>
+        private static T GetSingleTargetNode<T>(XNode doc, string xpath) where T : XObject
         {
             var foundNodes = doc.XPath2Select<T>(xpath).ToList();
 
             if (foundNodes == null || foundNodes.Count == 0)
-                throw new XPathException("The xpath provided did not correspond to any nodes. xpath:" + xpath);
-
+                throw new XPathException($"The xpath provided did not correspond to any nodes. xpath:{xpath}");
             if (foundNodes.Count > 1)
-                throw new XmlException("Invalid XPath for patching. Xpath returned multiple nodes. Xpath must return exactly one unambiguous node. xpath: " + xpath);
+                throw new XmlException($"Invalid XPath for patching. Xpath returned multiple nodes. Xpath must return exactly one unambiguous node. xpath: {xpath}");
 
             return foundNodes.First();
         }
@@ -170,7 +156,7 @@ namespace Tizuby.XmlPatchLib
         /// <param name="target">The target element to add the attribute to.</param>
         /// <param name="typeAttribute">The actual type attribute from target.</param>
         /// <param name="valueElement">The element containing the text value to add as the value of the new attribute.</param>
-        private void PatchAddAttribute(XElement target, XAttribute typeAttribute, XContainer valueElement)
+        private static void PatchAddAttribute(XElement target, XAttribute typeAttribute, XContainer valueElement)
         {
             // First, get the attribute name as that will need to be added to the target element.
             var attributeName = typeAttribute.Value[0] == '@' ? typeAttribute.Value.Remove(0, 1) : typeAttribute.Value;
@@ -190,7 +176,8 @@ namespace Tizuby.XmlPatchLib
         /// </summary>
         /// <param name="targetElement">The target to add to.</param>
         /// <param name="valueElement">The add element.</param>
-        private void PatchNormalAdd(XContainer targetElement, XElement valueElement)
+        /// <exception cref="XmlException"></exception>
+        private static void PatchNormalAdd(XContainer targetElement, XElement valueElement)
         {
             // Otherwise we're either going to be adding it as a child, or adding it depending on "pos".
             var positionAttribute = valueElement.Attribute("pos");
@@ -208,6 +195,25 @@ namespace Tizuby.XmlPatchLib
                 // Invalid position, throw error.
                 throw new XmlException("pos attribute is present, but has an illegal value for Add operation: " + valueElement);
             }
+        }
+
+        /// <summary>
+        ///     Get the XPath string from the <i>sel</i> attribute.
+        /// </summary>
+        /// <exception cref="XmlException"></exception>
+        /// <exception cref="XPathException"></exception>
+        private static string GetXPath(XElement element)
+        {
+            // TODO: Validate XPath by taking an IXPathValidator in the constructor? Not really a rush since invalid xpath should throw an exception when used.
+            var xPathAttribute = element.Attribute("sel");
+            if (xPathAttribute == null)
+                throw new XmlException($"sel attribute does not exist! All patch operations must include a 'sel' attribute! element:{element}");
+
+            var result = xPathAttribute.Value;
+            if (string.IsNullOrWhiteSpace(result))
+                throw new XPathException($"Invalid xpath. The value of the sel attribute was empty or all whitespace. element: {element}");
+
+            return result;
         }
     }
 }
