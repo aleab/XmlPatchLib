@@ -18,7 +18,10 @@
 	<!ENTITY step       "(&nodesel;(&pred;)*)">
 	<!ENTITY laststep   "(&step;|&attrsel;|&nssel;)">
 ]>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+<xs:schema xmlns="urn:aleab-rfc5261"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="urn:aleab-rfc5261"
+           elementFormDefault="qualified">
 
 	<xs:element name="diff">
 		<xs:complexType>

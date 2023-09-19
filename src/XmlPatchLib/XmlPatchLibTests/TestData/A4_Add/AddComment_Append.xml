@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<diff xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../rfc5261.xsd">
+<diff xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:aleab-rfc5261" xsi:schemaLocation="urn:aleab-rfc5261 ../../../rfc5261.xsd">
     <add sel="//main">
         <!-- New Comment -->
     </add>
