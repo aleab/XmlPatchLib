@@ -1,4 +1,6 @@
 ﻿[*.cs]
-
 dotnet_analyzer_diagnostic.severity = none
 dotnet_remove_unnecessary_suppression_exclusions = category: ReSharper
+
+[*.csproj]
+indent_size = 2

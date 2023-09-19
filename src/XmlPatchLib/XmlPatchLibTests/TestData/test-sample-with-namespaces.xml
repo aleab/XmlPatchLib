@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<original xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <attributedNode test="test" />
+    <x:main>
+        <!-- Comment node -->
+        <child1 x:Name="test1">Test-1</child1>
+        <child2 x:Name="test2">Test-2</child2>
+        Random text.
+    </x:main>
+</original>

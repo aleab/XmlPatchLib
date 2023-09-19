@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<original>
+    <attributedNode test="test" />
+    <main>
+        <!-- Comment node -->
+        <child id="1">Test-1</child>
+        <child id="2">Test-2</child>
+        Random text.
+    </main>
+</original>
