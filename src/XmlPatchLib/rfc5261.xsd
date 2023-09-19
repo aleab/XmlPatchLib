@@ -1,109 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE schema [
-	<!ENTITY ncname     "\i\c*">
-	<!ENTITY qname      "(&ncname;:)?&ncname;">
-	<!ENTITY aname      "@&qname;">
-	<!-- Axes -->
-	<!ENTITY nodeaxis   "(ancestor|descendant)(-or-self)?|(following|preceding)(-sibling)?|child|parent|self">
-	<!-- Node tests -->
-	<!ENTITY pi         "(processing-instruction\(('&ncname;')?\)|processing-instruction\((&quot;&ncname;&quot;)?\))">
-	<!ENTITY nodetest   "(&qname;|\*|\.\.?|((node|comment|text)\(\))|&pi;)">
-	<!-- Selectors -->
-	<!ENTITY nodesel    "(&nodeaxis;::)?&nodetest;">
-	<!ENTITY attrsel    "(&aname;|(attribute::&qname;))">
-	<!ENTITY nssel      "(namespace::&ncname;)">
-	<!-- Predicates -->
-	<!ENTITY pred       "\[.*\]">
-	<!-- Step -->
-	<!ENTITY step       "(&nodesel;(&pred;)*)">
-	<!ENTITY laststep   "(&step;|&attrsel;|&nssel;)">
+  <!ENTITY ncname     "\i\c*">
+  <!ENTITY qname      "(&ncname;:)?&ncname;">
+  <!ENTITY aname      "@&qname;">
+  <!-- Axes -->
+  <!ENTITY nodeaxis   "(ancestor|descendant)(-or-self)?|(following|preceding)(-sibling)?|child|parent|self">
+  <!-- Node tests -->
+  <!ENTITY pi         "(processing-instruction\(('&ncname;')?\)|processing-instruction\((&quot;&ncname;&quot;)?\))">
+  <!ENTITY nodetest   "(&qname;|\*|\.\.?|((node|comment|text)\(\))|&pi;)">
+  <!-- Selectors -->
+  <!ENTITY nodesel    "(&nodeaxis;::)?&nodetest;">
+  <!ENTITY attrsel    "(&aname;|(attribute::&qname;))">
+  <!ENTITY nssel      "(namespace::&ncname;)">
+  <!-- Predicates -->
+  <!ENTITY pred       "\[.*\]">
+  <!-- Step -->
+  <!ENTITY step       "(&nodesel;(&pred;)*)">
+  <!ENTITY laststep   "(&step;|&attrsel;|&nssel;)">
 ]>
 <xs:schema xmlns="urn:aleab-rfc5261"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
            targetNamespace="urn:aleab-rfc5261"
            elementFormDefault="qualified">
 
-	<xs:element name="diff">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:choice minOccurs="0" maxOccurs="unbounded">
-					<xs:element name="add" type="add" />
-					<xs:element name="replace" type="replace" />
-					<xs:element name="remove" type="remove" />
-				</xs:choice>
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
+  <xs:element name="diff">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element name="add" type="add" />
+          <xs:element name="replace" type="replace" />
+          <xs:element name="remove" type="remove" />
+        </xs:choice>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
 
-	<!-- Type Definitions -->
+  <!-- Type Definitions -->
 
-	<xs:simpleType name="xpath">
-		<xs:restriction base="xs:string">
-			<xs:pattern value="/{0,2}(&step;//?)*&laststep;" />
-		</xs:restriction>
-	</xs:simpleType>
+  <xs:simpleType name="xpath">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="/{0,2}(&step;//?)*&laststep;" />
+    </xs:restriction>
+  </xs:simpleType>
 
-	<xs:simpleType name="xpath-add">
-		<xs:restriction base="xs:string">
-			<xs:pattern value="/{0,2}(&step;//?)*&step;" />
-		</xs:restriction>
-	</xs:simpleType>
+  <xs:simpleType name="xpath-add">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="/{0,2}(&step;//?)*&step;" />
+    </xs:restriction>
+  </xs:simpleType>
 
-	<xs:simpleType name="type">
-		<xs:restriction base="xs:string">
-			<xs:pattern value="&aname;|&nssel;|namespace" />
-		</xs:restriction>
-	</xs:simpleType>
+  <xs:simpleType name="type">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="&aname;|&nssel;|namespace" />
+    </xs:restriction>
+  </xs:simpleType>
 
-	<!-- <add> -->
+  <!-- <add> -->
 
-	<xs:complexType name="add">
-		<xs:complexContent mixed="true">
-			<xs:restriction base="xs:anyType">
-				<xs:sequence>
-					<xs:any processContents="lax" namespace="##any" minOccurs="0" maxOccurs="unbounded" />
-				</xs:sequence>
-				<xs:attribute name="sel" type="xpath-add" use="required" />
-				<xs:attribute name="pos" type="pos" />
-				<xs:attribute name="type" type="type" use="optional" />
-			</xs:restriction>
-		</xs:complexContent>
-	</xs:complexType>
+  <xs:complexType name="add">
+    <xs:complexContent mixed="true">
+      <xs:restriction base="xs:anyType">
+        <xs:sequence>
+          <xs:any processContents="lax" namespace="##any" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute name="sel" type="xpath-add" use="required" />
+        <xs:attribute name="pos" type="pos" />
+        <xs:attribute name="type" type="type" use="optional" />
+      </xs:restriction>
+    </xs:complexContent>
+  </xs:complexType>
 
-	<xs:simpleType name="pos">
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="before" />
-			<xs:enumeration value="after" />
-			<xs:enumeration value="prepend" />
-		</xs:restriction>
-	</xs:simpleType>
+  <xs:simpleType name="pos">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="before" />
+      <xs:enumeration value="after" />
+      <xs:enumeration value="prepend" />
+    </xs:restriction>
+  </xs:simpleType>
 
-	<!-- <replace> -->
+  <!-- <replace> -->
 
-	<xs:complexType name="replace">
-		<xs:complexContent mixed="true">
-			<xs:restriction base="xs:anyType">
-				<xs:sequence>
-					<xs:any processContents="lax" namespace="##any" minOccurs="0" maxOccurs="1" />
-				</xs:sequence>
-				<xs:attribute name="sel" type="xpath" use="required" />
-			</xs:restriction>
-		</xs:complexContent>
-	</xs:complexType>
+  <xs:complexType name="replace">
+    <xs:complexContent mixed="true">
+      <xs:restriction base="xs:anyType">
+        <xs:sequence>
+          <xs:any processContents="lax" namespace="##any" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="sel" type="xpath" use="required" />
+      </xs:restriction>
+    </xs:complexContent>
+  </xs:complexType>
 
-	<!-- <remove> -->
+  <!-- <remove> -->
 
-	<xs:complexType name="remove">
-		<xs:attribute name="sel" type="xpath" use="required" />
-		<xs:attribute name="ws" type="ws" />
-	</xs:complexType>
+  <xs:complexType name="remove">
+    <xs:attribute name="sel" type="xpath" use="required" />
+    <xs:attribute name="ws" type="ws" />
+  </xs:complexType>
 
-	<xs:simpleType name="ws">
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="before" />
-			<xs:enumeration value="after" />
-			<xs:enumeration value="both" />
-		</xs:restriction>
-	</xs:simpleType>
+  <xs:simpleType name="ws">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="before" />
+      <xs:enumeration value="after" />
+      <xs:enumeration value="both" />
+    </xs:restriction>
+  </xs:simpleType>
 
 </xs:schema>
