@@ -7,13 +7,13 @@ using System.Xml.XPath;
 namespace XmlPatchLibTests
 {
     [TestClass]
-    public class A4_AddComment
+    public class A04_AddComment
     {
         [TestMethod]
         public void Prepend()
         {
             var doc = Shared.TestSample;
-            var diff = XDocument.Load(@"TestData\A4_Add\AddComment_Prepend.xml");
+            var diff = XDocument.Load(@"TestData\A04_Add\AddComment_Prepend.xml");
 
             Shared.Patcher.PatchXml(doc, diff);
 
@@ -26,7 +26,7 @@ namespace XmlPatchLibTests
         public void Append()
         {
             var doc = Shared.TestSample;
-            var diff = XDocument.Load(@"TestData\A4_Add\AddComment_Append.xml");
+            var diff = XDocument.Load(@"TestData\A04_Add\AddComment_Append.xml");
 
             Shared.Patcher.PatchXml(doc, diff);
 
@@ -39,7 +39,7 @@ namespace XmlPatchLibTests
         public void Before()
         {
             var doc = Shared.TestSample;
-            var diff = XDocument.Load(@"TestData\A4_Add\AddComment_Before.xml");
+            var diff = XDocument.Load(@"TestData\A04_Add\AddComment_Before.xml");
 
             Shared.Patcher.PatchXml(doc, diff);
 
@@ -52,7 +52,7 @@ namespace XmlPatchLibTests
         public void After()
         {
             var doc = Shared.TestSample;
-            var diff = XDocument.Load(@"TestData\A4_Add\AddComment_After.xml");
+            var diff = XDocument.Load(@"TestData\A04_Add\AddComment_After.xml");
 
             Shared.Patcher.PatchXml(doc, diff);
 

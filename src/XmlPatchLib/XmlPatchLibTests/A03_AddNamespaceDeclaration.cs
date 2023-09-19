@@ -6,13 +6,13 @@ using System.Xml.XPath;
 namespace XmlPatchLibTests
 {
     [TestClass]
-    public class A3_AddNamespaceDeclaration
+    public class A03_AddNamespaceDeclaration
     {
         [TestMethod]
         public void PrefixedNamespace()
         {
             var doc = Shared.TestSample;
-            var diff = XDocument.Load(@"TestData\A3_Add\AddNamespaceDeclaration.xml");
+            var diff = XDocument.Load(@"TestData\A03_Add\AddNamespaceDeclaration.xml");
 
             Shared.Patcher.PatchXml(doc, diff);
             
@@ -24,7 +24,7 @@ namespace XmlPatchLibTests
         public void EmptyNamespace()
         {
             var doc = Shared.TestSample;
-            var diff = XDocument.Load(@"TestData\A3_Add\AddNamespaceDeclaration_Empty.xml");
+            var diff = XDocument.Load(@"TestData\A03_Add\AddNamespaceDeclaration_Empty.xml");
 
             Shared.Patcher.PatchXml(doc, diff);
             
@@ -36,7 +36,7 @@ namespace XmlPatchLibTests
         public void ExistingNamespace_ShouldThrowException()
         {
             var doc = Shared.TestSampleWithNamespaces;
-            var diff = XDocument.Load(@"TestData\A3_Add\AddNamespaceDeclaration_Empty.xml");
+            var diff = XDocument.Load(@"TestData\A03_Add\AddNamespaceDeclaration_Empty.xml");
 
             Assert.ThrowsException<InvalidOperationException>(() => Shared.Patcher.PatchXml(doc, diff));
             

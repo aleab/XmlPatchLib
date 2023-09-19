@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE schema [
-  <!ENTITY ncname     "\i\c*">
+  <!ENTITY i          "[_A-Za-z]">
+  <!ENTITY c          "[-._A-Za-z0-9]">
+  <!ENTITY ncname     "&i;&c;*">
   <!ENTITY qname      "(&ncname;:)?&ncname;">
   <!ENTITY aname      "@&qname;">
   <!-- Axes -->
-  <!ENTITY nodeaxis   "(ancestor|descendant)(-or-self)?|(following|preceding)(-sibling)?|child|parent|self">
+  <!ENTITY nodeaxis   "((ancestor|descendant)(-or-self)?|(following|preceding)(-sibling)?|child|parent|self)">
   <!-- Node tests -->
   <!ENTITY pi         "(processing-instruction\(('&ncname;')?\)|processing-instruction\((&quot;&ncname;&quot;)?\))">
   <!ENTITY nodetest   "(&qname;|\*|\.\.?|((node|comment|text)\(\))|&pi;)">
   <!-- Selectors -->
   <!ENTITY nodesel    "(&nodeaxis;::)?&nodetest;">
   <!ENTITY attrsel    "(&aname;|(attribute::&qname;))">
-  <!ENTITY nssel      "(namespace::&ncname;)">
+  <!ENTITY emptyns    "((\*\[name\(\)\s*=\s*''\])|(\*\[name\(\)\s*=\s*&quot;&quot;\]))">
+  <!ENTITY nssel      "(namespace::(&ncname;|&emptyns;))">
   <!-- Predicates -->
   <!ENTITY pred       "\[.*\]">
   <!-- Step -->
@@ -51,7 +54,7 @@
 
   <xs:simpleType name="type">
     <xs:restriction base="xs:string">
-      <xs:pattern value="&aname;|&nssel;|namespace" />
+      <xs:pattern value="&aname;|namespace(::&ncname;)?" />
     </xs:restriction>
   </xs:simpleType>
 

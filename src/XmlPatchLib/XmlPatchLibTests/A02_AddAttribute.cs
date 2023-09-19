@@ -6,13 +6,13 @@ using System.Xml.XPath;
 namespace XmlPatchLibTests
 {
     [TestClass]
-    public class A2_AddAttribute
+    public class A02_AddAttribute
     {
         [TestMethod]
         public void NewAttribute()
         {
             var doc = Shared.TestSample;
-            var diff = XDocument.Load(@"TestData\A2_Add\AddAttribute.xml");
+            var diff = XDocument.Load(@"TestData\A02_Add\AddAttribute.xml");
 
             Shared.Patcher.PatchXml(doc, diff);
 
@@ -26,7 +26,7 @@ namespace XmlPatchLibTests
         public void ExistingAttribute_ShouldThrowException()
         {
             var doc = Shared.TestSample;
-            var diff = XDocument.Load(@"TestData\A2_Add\AddAttribute_Existing.xml");
+            var diff = XDocument.Load(@"TestData\A02_Add\AddAttribute_Existing.xml");
 
             Assert.ThrowsException<InvalidOperationException>(() => Shared.Patcher.PatchXml(doc, diff));
 

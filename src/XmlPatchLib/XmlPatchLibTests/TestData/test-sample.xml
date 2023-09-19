@@ -7,4 +7,5 @@
         <child id="2">Test-2</child>
         Random text.
     </main>
+    <?test foo="bar"?>
 </original>

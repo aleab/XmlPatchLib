@@ -6,13 +6,13 @@ using System.Xml.XPath;
 namespace XmlPatchLibTests
 {
     [TestClass]
-    public class A6_ReplaceElement
+    public class A06_ReplaceElement
     {
         [TestMethod]
         public void ExistingElement()
         {
             var doc = Shared.TestSample;
-            var diff = XDocument.Load(@"TestData\A6_Replace\ReplaceElement.xml");
+            var diff = XDocument.Load(@"TestData\A06_Replace\ReplaceElement.xml");
 
             Shared.Patcher.PatchXml(doc, diff);
 
@@ -25,7 +25,7 @@ namespace XmlPatchLibTests
         public void MissingElement_ShouldThrowException()
         {
             var doc = Shared.TestSample;
-            var diff = XDocument.Load(@"TestData\A6_Replace\ReplaceElement_Missing.xml");
+            var diff = XDocument.Load(@"TestData\A06_Replace\ReplaceElement_Missing.xml");
 
             Assert.ThrowsException<XPathException>(() => Shared.Patcher.PatchXml(doc, diff));
 

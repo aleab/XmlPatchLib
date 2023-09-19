@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<original xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<original xmlns="http://www.w3.org/2001/XMLSchema" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <attributedNode test="test" />
     <x:main>
         <!-- Comment node -->

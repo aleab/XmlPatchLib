@@ -8,13 +8,13 @@ using System.Xml.XPath;
 namespace XmlPatchLibTests
 {
     [TestClass]
-    public class A1_AddElement
+    public class A01_AddElement
     {
         [TestMethod]
         public void Prepend()
         {
             var doc = Shared.TestSample;
-            var diff = XDocument.Load(@"TestData\A1_Add\AddElement_Prepend.xml");
+            var diff = XDocument.Load(@"TestData\A01_Add\AddElement_Prepend.xml");
 
             Shared.Patcher.PatchXml(doc, diff);
 
@@ -31,7 +31,7 @@ namespace XmlPatchLibTests
         public void Append()
         {
             var doc = Shared.TestSample;
-            var diff = XDocument.Load(@"TestData\A1_Add\AddElement_Append.xml");
+            var diff = XDocument.Load(@"TestData\A01_Add\AddElement_Append.xml");
 
             Shared.Patcher.PatchXml(doc, diff);
 
@@ -48,7 +48,7 @@ namespace XmlPatchLibTests
         public void Before()
         {
             var doc = Shared.TestSample;
-            var diff = XDocument.Load(@"TestData\A1_Add\AddElement_Before.xml");
+            var diff = XDocument.Load(@"TestData\A01_Add\AddElement_Before.xml");
 
             Shared.Patcher.PatchXml(doc, diff);
             TestBeforeAfter(doc);
@@ -68,7 +68,7 @@ namespace XmlPatchLibTests
         public void ComplexChild()
         {
             var doc = Shared.TestSample;
-            var diff = XDocument.Load(@"TestData\A1_Add\AddElement_ComplexChild.xml");
+            var diff = XDocument.Load(@"TestData\A01_Add\AddElement_ComplexChild.xml");
 
             Shared.Patcher.PatchXml(doc, diff);
 

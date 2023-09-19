@@ -6,13 +6,13 @@ using System.Xml.XPath;
 namespace XmlPatchLibTests
 {
     [TestClass]
-    public class A7_ReplaceAttribute
+    public class A07_ReplaceAttribute
     {
         [TestMethod]
         public void ExistingAttribute()
         {
             var doc = Shared.TestSample;
-            var diff = XDocument.Load(@"TestData\A7_Replace\ReplaceAttribute.xml");
+            var diff = XDocument.Load(@"TestData\A07_Replace\ReplaceAttribute.xml");
 
             Shared.Patcher.PatchXml(doc, diff);
 
@@ -24,7 +24,7 @@ namespace XmlPatchLibTests
         public void MissingAttribute_ShouldThrowException()
         {
             var doc = Shared.TestSample;
-            var diff = XDocument.Load(@"TestData\A7_Replace\ReplaceAttribute_Missing.xml");
+            var diff = XDocument.Load(@"TestData\A07_Replace\ReplaceAttribute_Missing.xml");
 
             Assert.ThrowsException<XPathException>(() => Shared.Patcher.PatchXml(doc, diff));
         }
