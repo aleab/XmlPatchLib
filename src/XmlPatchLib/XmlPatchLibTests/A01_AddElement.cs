@@ -7,13 +7,16 @@ using System.Xml.XPath;
 
 namespace XmlPatchLibTests
 {
+    /// <summary>
+    ///     https://datatracker.ietf.org/doc/html/rfc5261#appendix-A.1
+    /// </summary>
     [TestClass]
     public class A01_AddElement
     {
         [TestMethod]
         public void Prepend()
         {
-            var doc = Shared.TestSample;
+            var doc = Shared.GetTestSample();
             var diff = XDocument.Load(@"TestData\A01_Add\AddElement_Prepend.xml");
 
             Shared.Patcher.PatchXml(doc, diff);
@@ -30,7 +33,7 @@ namespace XmlPatchLibTests
         [TestMethod]
         public void Append()
         {
-            var doc = Shared.TestSample;
+            var doc = Shared.GetTestSample();
             var diff = XDocument.Load(@"TestData\A01_Add\AddElement_Append.xml");
 
             Shared.Patcher.PatchXml(doc, diff);
@@ -47,7 +50,7 @@ namespace XmlPatchLibTests
         [TestMethod]
         public void Before()
         {
-            var doc = Shared.TestSample;
+            var doc = Shared.GetTestSample();
             var diff = XDocument.Load(@"TestData\A01_Add\AddElement_Before.xml");
 
             Shared.Patcher.PatchXml(doc, diff);
@@ -57,8 +60,8 @@ namespace XmlPatchLibTests
         [TestMethod]
         public void After()
         {
-            var doc = Shared.TestSample;
-            var diff = XDocument.Load(@"TestData\A1_Add\AddElement_After.xml");
+            var doc = Shared.GetTestSample();
+            var diff = XDocument.Load(@"TestData\A01_Add\AddElement_After.xml");
 
             Shared.Patcher.PatchXml(doc, diff);
             TestBeforeAfter(doc);
@@ -67,7 +70,7 @@ namespace XmlPatchLibTests
         [TestMethod]
         public void ComplexChild()
         {
-            var doc = Shared.TestSample;
+            var doc = Shared.GetTestSample();
             var diff = XDocument.Load(@"TestData\A01_Add\AddElement_ComplexChild.xml");
 
             Shared.Patcher.PatchXml(doc, diff);

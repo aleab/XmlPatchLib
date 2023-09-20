@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<diff xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../rfc5261.xsd"
+      xmlns:empty="http://www.w3.org/2001/XMLSchema"
+      xmlns:shouldbex="http://schemas.microsoft.com/winfx/2006/xaml">
+    <add sel="/empty:original">
+        <shouldbex:elem>
+            <empty:child shouldbex:id="3" />
+        </shouldbex:elem>
+    </add>
+</diff>

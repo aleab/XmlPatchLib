@@ -3,8 +3,8 @@
     <attributedNode test="test" />
     <x:main>
         <!-- Comment node -->
-        <child1 x:Name="test1">Test-1</child1>
-        <child2 x:Name="test2">Test-2</child2>
+        <child x:id="1">Test-1</child>
+        <child x:id="2">Test-2</child>
         Random text.
     </x:main>
 </original>

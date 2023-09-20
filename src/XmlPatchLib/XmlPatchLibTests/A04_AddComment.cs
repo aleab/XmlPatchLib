@@ -6,13 +6,16 @@ using System.Xml.XPath;
 
 namespace XmlPatchLibTests
 {
+    /// <summary>
+    ///     https://datatracker.ietf.org/doc/html/rfc5261#appendix-A.4
+    /// </summary>
     [TestClass]
     public class A04_AddComment
     {
         [TestMethod]
         public void Prepend()
         {
-            var doc = Shared.TestSample;
+            var doc = Shared.GetTestSample();
             var diff = XDocument.Load(@"TestData\A04_Add\AddComment_Prepend.xml");
 
             Shared.Patcher.PatchXml(doc, diff);
@@ -25,7 +28,7 @@ namespace XmlPatchLibTests
         [TestMethod]
         public void Append()
         {
-            var doc = Shared.TestSample;
+            var doc = Shared.GetTestSample();
             var diff = XDocument.Load(@"TestData\A04_Add\AddComment_Append.xml");
 
             Shared.Patcher.PatchXml(doc, diff);
@@ -38,7 +41,7 @@ namespace XmlPatchLibTests
         [TestMethod]
         public void Before()
         {
-            var doc = Shared.TestSample;
+            var doc = Shared.GetTestSample();
             var diff = XDocument.Load(@"TestData\A04_Add\AddComment_Before.xml");
 
             Shared.Patcher.PatchXml(doc, diff);
@@ -51,7 +54,7 @@ namespace XmlPatchLibTests
         [TestMethod]
         public void After()
         {
-            var doc = Shared.TestSample;
+            var doc = Shared.GetTestSample();
             var diff = XDocument.Load(@"TestData\A04_Add\AddComment_After.xml");
 
             Shared.Patcher.PatchXml(doc, diff);

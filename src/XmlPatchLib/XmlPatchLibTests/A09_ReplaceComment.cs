@@ -6,13 +6,16 @@ using System.Xml.XPath;
 
 namespace XmlPatchLibTests
 {
+    /// <summary>
+    ///     https://datatracker.ietf.org/doc/html/rfc5261#appendix-A.9
+    /// </summary>
     [TestClass]
     public class A09_ReplaceComment
     {
         [TestMethod]
         public void ExistingComment()
         {
-            var doc = Shared.TestSample;
+            var doc = Shared.GetTestSample();
             var diff = XDocument.Load(@"TestData\A09_Replace\ReplaceComment.xml");
 
             Shared.Patcher.PatchXml(doc, diff);
@@ -29,7 +32,7 @@ namespace XmlPatchLibTests
         [TestMethod]
         public void MissingComment_ShouldThrowException()
         {
-            var doc = Shared.TestSample;
+            var doc = Shared.GetTestSample();
             var diff = XDocument.Load(@"TestData\A09_Replace\ReplaceComment_Missing.xml");
 
             Assert.ThrowsException<XPathException>(() => Shared.Patcher.PatchXml(doc, diff));

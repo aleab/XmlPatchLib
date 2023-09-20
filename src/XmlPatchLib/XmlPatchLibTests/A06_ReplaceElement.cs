@@ -5,13 +5,16 @@ using System.Xml.XPath;
 
 namespace XmlPatchLibTests
 {
+    /// <summary>
+    ///     https://datatracker.ietf.org/doc/html/rfc5261#appendix-A.6
+    /// </summary>
     [TestClass]
     public class A06_ReplaceElement
     {
         [TestMethod]
         public void ExistingElement()
         {
-            var doc = Shared.TestSample;
+            var doc = Shared.GetTestSample();
             var diff = XDocument.Load(@"TestData\A06_Replace\ReplaceElement.xml");
 
             Shared.Patcher.PatchXml(doc, diff);
@@ -24,7 +27,7 @@ namespace XmlPatchLibTests
         [TestMethod]
         public void MissingElement_ShouldThrowException()
         {
-            var doc = Shared.TestSample;
+            var doc = Shared.GetTestSample();
             var diff = XDocument.Load(@"TestData\A06_Replace\ReplaceElement_Missing.xml");
 
             Assert.ThrowsException<XPathException>(() => Shared.Patcher.PatchXml(doc, diff));

@@ -6,28 +6,28 @@ using System.Xml.XPath;
 namespace XmlPatchLibTests
 {
     /// <summary>
-    ///     https://datatracker.ietf.org/doc/html/rfc5261#appendix-A.7
+    ///     https://datatracker.ietf.org/doc/html/rfc5261#appendix-A.13
     /// </summary>
     [TestClass]
-    public class A07_ReplaceAttribute
+    public class A13_RemoveAttribute
     {
         [TestMethod]
         public void ExistingAttribute()
         {
             var doc = Shared.GetTestSample();
-            var diff = XDocument.Load(@"TestData\A07_Replace\ReplaceAttribute.xml");
+            var diff = XDocument.Load(@"TestData\A13_Remove\RemoveAttribute.xml");
 
             Shared.Patcher.PatchXml(doc, diff);
 
             var elem = doc.XPathSelectElement("//attributedNode")!;
-            Assert.AreEqual("new-attr-value", elem.Attribute("test")?.Value);
+            Assert.IsNull(elem.Attribute("test"));
         }
 
         [TestMethod]
         public void MissingAttribute_ShouldThrowException()
         {
             var doc = Shared.GetTestSample();
-            var diff = XDocument.Load(@"TestData\A07_Replace\ReplaceAttribute_Missing.xml");
+            var diff = XDocument.Load(@"TestData\A13_Remove\RemoveAttribute_Missing.xml");
 
             Assert.ThrowsException<XPathException>(() => Shared.Patcher.PatchXml(doc, diff));
         }

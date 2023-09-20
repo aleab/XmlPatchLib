@@ -6,8 +6,16 @@ namespace XmlPatchLibTests
     internal static class Shared
     {
         public static XmlPatcher Patcher { get; } = new XmlPatcher();
-        public static XDocument TestSample => XDocument.Load(@"TestData\test-sample.xml");
-        public static XDocument TestSampleWithNamespaces => XDocument.Load(@"TestData\test-sample-with-namespaces.xml");
+
+        public static XDocument GetTestSample(LoadOptions loadOptions = LoadOptions.None)
+        {
+            return XDocument.Load(@"TestData\test-sample.xml", loadOptions);
+        }
+
+        public static XDocument GetTestSampleWithNamespaces(LoadOptions loadOptions = LoadOptions.None)
+        {
+            return XDocument.Load(@"TestData\test-sample-with-namespaces.xml", loadOptions);
+        }
 
         public static void TestWith<T>(T o, Action<T> tests)
         {

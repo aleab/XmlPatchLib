@@ -5,13 +5,16 @@ using System.Xml.XPath;
 
 namespace XmlPatchLibTests
 {
+    /// <summary>
+    ///     https://datatracker.ietf.org/doc/html/rfc5261#appendix-A.2
+    /// </summary>
     [TestClass]
     public class A02_AddAttribute
     {
         [TestMethod]
         public void NewAttribute()
         {
-            var doc = Shared.TestSample;
+            var doc = Shared.GetTestSample();
             var diff = XDocument.Load(@"TestData\A02_Add\AddAttribute.xml");
 
             Shared.Patcher.PatchXml(doc, diff);
@@ -25,7 +28,7 @@ namespace XmlPatchLibTests
         [TestMethod]
         public void ExistingAttribute_ShouldThrowException()
         {
-            var doc = Shared.TestSample;
+            var doc = Shared.GetTestSample();
             var diff = XDocument.Load(@"TestData\A02_Add\AddAttribute_Existing.xml");
 
             Assert.ThrowsException<InvalidOperationException>(() => Shared.Patcher.PatchXml(doc, diff));

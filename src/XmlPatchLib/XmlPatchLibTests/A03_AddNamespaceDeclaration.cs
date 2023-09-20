@@ -5,17 +5,20 @@ using System.Xml.XPath;
 
 namespace XmlPatchLibTests
 {
+    /// <summary>
+    ///     https://datatracker.ietf.org/doc/html/rfc5261#appendix-A.3
+    /// </summary>
     [TestClass]
     public class A03_AddNamespaceDeclaration
     {
         [TestMethod]
         public void PrefixedNamespace()
         {
-            var doc = Shared.TestSample;
+            var doc = Shared.GetTestSample();
             var diff = XDocument.Load(@"TestData\A03_Add\AddNamespaceDeclaration.xml");
 
             Shared.Patcher.PatchXml(doc, diff);
-            
+
             var nsmap = GetNamespaceMap(doc.XPathSelectElement("//main")!);
             Assert.AreEqual("urn:ns:x", nsmap["x"]);
         }
@@ -23,11 +26,11 @@ namespace XmlPatchLibTests
         [TestMethod]
         public void EmptyNamespace()
         {
-            var doc = Shared.TestSample;
+            var doc = Shared.GetTestSample();
             var diff = XDocument.Load(@"TestData\A03_Add\AddNamespaceDeclaration_Empty.xml");
 
             Shared.Patcher.PatchXml(doc, diff);
-            
+
             var nsmap = GetNamespaceMap(doc.XPathSelectElement("//main")!);
             Assert.AreEqual("urn:ns:empty", nsmap[""]);
         }
@@ -35,11 +38,11 @@ namespace XmlPatchLibTests
         [TestMethod]
         public void ExistingNamespace_ShouldThrowException()
         {
-            var doc = Shared.TestSampleWithNamespaces;
+            var doc = Shared.GetTestSampleWithNamespaces();
             var diff = XDocument.Load(@"TestData\A03_Add\AddNamespaceDeclaration_Empty.xml");
 
             Assert.ThrowsException<InvalidOperationException>(() => Shared.Patcher.PatchXml(doc, diff));
-            
+
             var nsmap = GetNamespaceMap(doc.Root!);
             Assert.AreEqual("http://schemas.microsoft.com/winfx/2006/xaml", nsmap["x"]);
         }

@@ -6,13 +6,16 @@ using System.Xml.XPath;
 
 namespace XmlPatchLibTests
 {
+    /// <summary>
+    ///     https://datatracker.ietf.org/doc/html/rfc5261#appendix-A.10
+    /// </summary>
     [TestClass]
     public class A10_ReplaceProcessingInstruction
     {
         [TestMethod]
         public void ExistingProcessingInstruction()
         {
-            var doc = Shared.TestSample;
+            var doc = Shared.GetTestSample();
             var diff = XDocument.Load(@"TestData\A10_Replace\ReplaceProcessingInstruction.xml");
 
             Shared.Patcher.PatchXml(doc, diff);
@@ -29,7 +32,7 @@ namespace XmlPatchLibTests
         [TestMethod]
         public void MissingProcessingInstruction_ShouldThrowException()
         {
-            var doc = Shared.TestSample;
+            var doc = Shared.GetTestSample();
             var diff = XDocument.Load(@"TestData\A10_Replace\ReplaceProcessingInstruction_Missing.xml");
 
             Assert.ThrowsException<XPathException>(() => Shared.Patcher.PatchXml(doc, diff));
