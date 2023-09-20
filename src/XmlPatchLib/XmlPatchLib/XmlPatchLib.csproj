@@ -6,14 +6,4 @@
     <AssemblyName>Tizuby.XmlPatchLib</AssemblyName>
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Include="..\rfc5261.xsd" Link="rfc5261.xsd">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="XPath2.Extensions" Version="1.1.3" />
-  </ItemGroup>
-
 </Project>

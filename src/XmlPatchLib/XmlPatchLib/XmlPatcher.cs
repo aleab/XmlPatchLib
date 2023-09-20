@@ -1,113 +1,133 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using Wmhelp.XPath2;
+using Tizuby.XmlPatchLib.XPath;
 
 namespace Tizuby.XmlPatchLib
 {
     public class XmlPatcher
     {
         protected string RootElementName { get; }
+        protected bool UseBestEffort { get; }
+        protected IXPathEvaluator XPathEvaluator { get; }
 
         // TODO: Instead of taking the string for the root name itself, use some type of extendable system to allow differing methods, such as <patch></patch> (RFC 7351). Default should always be <diff>. Some type of lookup table?
-        public XmlPatcher(string rootElementName = "diff")
+        public XmlPatcher(XmlPatcherOptions options = null)
         {
-            this.RootElementName = rootElementName;
+            options = options ?? new XmlPatcherOptions();
+
+            this.RootElementName = options.RootElementName;
+            this.UseBestEffort = options.UseBestEffort;
+            this.XPathEvaluator = options.XPathEvaluator ?? new DefaultXPathEvaluator();
         }
 
         /// <summary>
         ///     Attempts to patch the given XML document using the given diff xml document.
         /// </summary>
-        /// <param name="originalDoc">The original XML document to patch.</param>
-        /// <param name="diffDoc">The diff XML document containing the patch operations.</param>
-        /// <param name="useBestEffort">Whether to continue with further patch operations if an error is encountered or not.</param>
+        /// <param name="sourceDocument">The original XML document to patch.</param>
+        /// <param name="patchDocument">The diff XML document containing the patch operations.</param>
         /// <returns>A list of encountered exceptions when useBestEffort is true.</returns>
         /// <exception cref="XmlException"></exception>
         /// <exception cref="XPathException"></exception>
         /// <exception cref="XPath2Exception"></exception>
-        public IEnumerable<Exception> PatchXml(XDocument originalDoc, XDocument diffDoc, bool useBestEffort = false)
+        public IEnumerable<Exception> PatchXml(XDocument sourceDocument, XDocument patchDocument)
         {
-            if (originalDoc == null)
-                throw new ArgumentNullException(nameof(originalDoc));
-            if (diffDoc == null)
-                throw new ArgumentNullException(nameof(diffDoc));
+            if (sourceDocument == null)
+                throw new ArgumentNullException(nameof(sourceDocument));
+            if (patchDocument == null)
+                throw new ArgumentNullException(nameof(patchDocument));
 
-            if (originalDoc.Root == null)
-                throw new InvalidDataException("The original document's root is null");
-            if (diffDoc.Root == null)
-                throw new InvalidDataException("The patch document's root is null");
+            if (sourceDocument.Root == null)
+                throw new XmlException("The source document's root is null");
+            if (patchDocument.Root == null)
+                throw new XmlException("The patch document's root is null");
+
+            if (patchDocument.Root.Name.LocalName != this.RootElementName)
+                throw new XmlException($"The patch document's root is \"{patchDocument.Root.Name.LocalName}\"; expected \"{this.RootElementName}\"");
 
             // TODO: Use a validator on the diff doc. Any original doc is considered valid.
 
             var exceptionList = new List<Exception>();
 
-            foreach (var operationElement in diffDoc.Root.Elements())
+            foreach (var operationNode in patchDocument.Root.Elements())
             {
                 Action<XDocument, XElement> operation = null;
-                switch (operationElement.Name.LocalName)
+                switch (operationNode.Name.LocalName)
                 {
                     case "add":
-                        operation = this.PatchAddNode;
+                        operation = this.PatchAdd;
                         break;
                     case "replace":
-                        operation = this.PatchReplaceNode;
+                        operation = this.PatchReplace;
                         break;
                     case "remove":
-                        operation = this.PatchRemoveNode;
+                        operation = this.PatchRemove;
                         break;
                 }
 
                 if (operation != null)
-                    RunOperation(operation, originalDoc, operationElement, useBestEffort, exceptionList);
+                    this.RunOperation(operation, sourceDocument, operationNode, exceptionList);
             }
 
             return exceptionList;
         }
 
-        protected void PatchAddNode(XDocument originalDoc, XElement addElement)
+        private void RunOperation(Action<XDocument, XElement> operation, XDocument document, XElement operationNode, ICollection<Exception> exceptionList)
         {
-            var xpath = GetXPath(addElement);
-            var targetElement = GetSingleTargetNode<XElement>(originalDoc, xpath);
-            var typeAttribute = addElement.Attribute("type");
+            try
+            {
+                operation.Invoke(document, operationNode);
+            }
+            catch (Exception ex) when (ex is XmlException || ex is XPathException || ex is InvalidOperationException)
+            {
+                if (this.UseBestEffort)
+                    exceptionList.Add(ex);
+                else
+                    throw;
+            }
+        }
+
+        protected void PatchAdd(XDocument sourceDocument, XElement operationNode)
+        {
+            var xpath = GetXPath(operationNode);
+            var targetElement = this.XPathEvaluator.SelectSingle<XElement>(sourceDocument, xpath);
+            var typeAttribute = operationNode.Attribute("type");
 
             // If there's a type attribute, it means the add operation is adding an attribute to the target element.
             if (typeAttribute != null)
-                PatchAddAttribute(targetElement, typeAttribute, addElement);
+                PatchAddAttribute(targetElement, typeAttribute, operationNode);
             else
-                PatchNormalAdd(targetElement, addElement);
+                PatchNormalAdd(targetElement, operationNode);
         }
 
         [SuppressMessage("ReSharper", "PossibleNullReferenceException", Justification = "This method is expected to throw exceptions if the target node is not found")]
-        protected void PatchReplaceNode(XDocument originalDoc, XElement replaceElement)
+        protected void PatchReplace(XDocument sourceDocument, XElement operationNode)
         {
-            var xpath = GetXPath(replaceElement);
-
-            var targetXObject = GetSingleTargetNode<XObject>(originalDoc, xpath);
+            var xpath = GetXPath(operationNode);
+            var targetXObject = this.XPathEvaluator.SelectSingle<XObject>(sourceDocument, xpath);
 
             if (targetXObject.NodeType == XmlNodeType.Attribute)
             {
                 var attribute = targetXObject as XAttribute;
-                attribute.SetValue(replaceElement.Value);
+                attribute.SetValue(operationNode.Value);
             }
             else
             {
                 var node = targetXObject as XNode;
-                node.ReplaceWith(replaceElement.Nodes());
+                node.ReplaceWith(operationNode.Nodes());
             }
         }
 
         [SuppressMessage("ReSharper", "PossibleNullReferenceException", Justification = "This method is expected to throw exceptions if the target node is not found")]
-        protected void PatchRemoveNode(XDocument originalDoc, XElement removalElement)
+        protected void PatchRemove(XDocument sourceDocument, XElement operationNode)
         {
             // TODO: Support ws removal for sibling whitespace nodes.
-            var xpath = GetXPath(removalElement);
-
-            var targetXObject = GetSingleTargetNode<XObject>(originalDoc, xpath);
+            var xpath = GetXPath(operationNode);
+            var targetXObject = this.XPathEvaluator.SelectSingle<XObject>(sourceDocument, xpath);
 
             if (targetXObject.NodeType == XmlNodeType.Attribute)
             {
@@ -119,35 +139,6 @@ namespace Tizuby.XmlPatchLib
                 var node = targetXObject as XNode;
                 node.Remove();
             }
-        }
-
-        private static void RunOperation(Action<XDocument, XElement> operation, XDocument originalDoc, XElement operationElement, bool useBestEffort, ICollection<Exception> exceptionList)
-        {
-            try
-            {
-                operation.Invoke(originalDoc, operationElement);
-            }
-            catch (Exception ex) when (ex is XmlException || ex is XPathException || ex is XPath2Exception)
-            {
-                if (useBestEffort)
-                    exceptionList.Add(ex);
-                else
-                    throw;
-            }
-        }
-
-        /// <exception cref="XPathException"></exception>
-        /// <exception cref="XmlException"></exception>
-        private static T GetSingleTargetNode<T>(XNode doc, string xpath) where T : XObject
-        {
-            var foundNodes = doc.XPath2Select<T>(xpath).ToList();
-
-            if (foundNodes == null || foundNodes.Count == 0)
-                throw new XPathException($"The xpath provided did not correspond to any nodes. xpath:{xpath}");
-            if (foundNodes.Count > 1)
-                throw new XmlException($"Invalid XPath for patching. Xpath returned multiple nodes. Xpath must return exactly one unambiguous node. xpath: {xpath}");
-
-            return foundNodes.First();
         }
 
         /// <summary>
@@ -189,7 +180,7 @@ namespace Tizuby.XmlPatchLib
             else if (positionAttribute.Value.Equals("before", StringComparison.OrdinalIgnoreCase))
                 targetElement.AddBeforeSelf(valueElement.Elements());
             else if (positionAttribute.Value.Equals("after", StringComparison.OrdinalIgnoreCase))
-                targetElement.AddAfterSelf(targetElement.Elements());
+                targetElement.AddAfterSelf(valueElement.Elements());
             else
             {
                 // Invalid position, throw error.
@@ -205,15 +196,15 @@ namespace Tizuby.XmlPatchLib
         private static string GetXPath(XElement element)
         {
             // TODO: Validate XPath by taking an IXPathValidator in the constructor? Not really a rush since invalid xpath should throw an exception when used.
-            var xPathAttribute = element.Attribute("sel");
-            if (xPathAttribute == null)
-                throw new XmlException($"sel attribute does not exist! All patch operations must include a 'sel' attribute! element:{element}");
+            var sel = element.Attribute("sel");
+            if (sel == null)
+                throw new XmlException($"\"sel\" attribute does not exist! All patch operations must include a \"sel\" attribute! Element: {XmlToStringHelper.Head(element)}");
 
-            var result = xPathAttribute.Value;
-            if (string.IsNullOrWhiteSpace(result))
-                throw new XPathException($"Invalid xpath. The value of the sel attribute was empty or all whitespace. element: {element}");
+            var value = sel.Value;
+            if (string.IsNullOrWhiteSpace(value))
+                throw new XPathException($"Invalid XPath. The value of the \"sel\" attribute was empty or all whitespace. Element: {XmlToStringHelper.Head(element)}");
 
-            return result;
+            return value;
         }
     }
 }

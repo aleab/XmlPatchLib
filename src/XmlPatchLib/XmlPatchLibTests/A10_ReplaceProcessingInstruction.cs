@@ -35,7 +35,7 @@ namespace XmlPatchLibTests
             var doc = Shared.GetTestSample();
             var diff = XDocument.Load(@"TestData\A10_Replace\ReplaceProcessingInstruction_Missing.xml");
 
-            Assert.ThrowsException<XPathException>(() => Shared.Patcher.PatchXml(doc, diff));
+            Assert.ThrowsException<InvalidOperationException>(() => Shared.Patcher.PatchXml(doc, diff));
         }
     }
 }

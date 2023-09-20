@@ -30,7 +30,7 @@ namespace XmlPatchLibTests
             var doc = Shared.GetTestSample();
             var diff = XDocument.Load(@"TestData\A06_Replace\ReplaceElement_Missing.xml");
 
-            Assert.ThrowsException<XPathException>(() => Shared.Patcher.PatchXml(doc, diff));
+            Assert.ThrowsException<InvalidOperationException>(() => Shared.Patcher.PatchXml(doc, diff));
 
             var child1 = doc.XPathSelectElement("//main/child[@id='3']");
             Assert.IsNull(child1);

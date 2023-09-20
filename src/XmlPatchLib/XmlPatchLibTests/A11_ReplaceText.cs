@@ -46,7 +46,7 @@ namespace XmlPatchLibTests
             var doc = Shared.GetTestSample();
             var diff = XDocument.Load(@"TestData\A11_Replace\ReplaceText_EmptyNode.xml");
 
-            Assert.ThrowsException<XPathException>(() => Shared.Patcher.PatchXml(doc, diff));
+            Assert.ThrowsException<InvalidOperationException>(() => Shared.Patcher.PatchXml(doc, diff));
         }
     }
 }

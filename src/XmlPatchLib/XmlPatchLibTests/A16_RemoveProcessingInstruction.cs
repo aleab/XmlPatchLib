@@ -29,7 +29,7 @@ namespace XmlPatchLibTests
             var doc = Shared.GetTestSample();
             var diff = XDocument.Load(@"TestData\A16_Remove\RemoveProcessingInstruction_Missing.xml");
 
-            Assert.ThrowsException<XPathException>(() => Shared.Patcher.PatchXml(doc, diff));
+            Assert.ThrowsException<InvalidOperationException>(() => Shared.Patcher.PatchXml(doc, diff));
         }
     }
 }

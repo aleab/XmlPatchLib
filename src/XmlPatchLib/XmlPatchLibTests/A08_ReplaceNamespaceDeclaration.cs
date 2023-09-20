@@ -41,7 +41,7 @@ namespace XmlPatchLibTests
             var doc = Shared.GetTestSample();
             var diff = XDocument.Load(@"TestData\A08_Replace\ReplaceNamespaceDeclaration.xml");
 
-            Assert.ThrowsException<XPathException>(() => Shared.Patcher.PatchXml(doc, diff));
+            Assert.ThrowsException<InvalidOperationException>(() => Shared.Patcher.PatchXml(doc, diff));
         }
 
         private static Dictionary<string, string> GetNamespaceMap(XElement element)
