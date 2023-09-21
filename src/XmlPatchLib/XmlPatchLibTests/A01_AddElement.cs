@@ -11,6 +11,7 @@ namespace XmlPatchLibTests
     ///     https://datatracker.ietf.org/doc/html/rfc5261#appendix-A.1
     /// </summary>
     [TestClass]
+    [TestCategory("<add>")]
     public class A01_AddElement
     {
         [TestMethod]
@@ -136,6 +137,25 @@ namespace XmlPatchLibTests
                 Assert.AreEqual("child", child4.Name.LocalName, "[4]");
                 Assert.AreEqual("empty", child4.Attribute("id")?.Value, "[4]");
                 Assert.IsTrue(child4.IsEmpty, "[4] should be empty");
+            });
+        }
+
+        [TestMethod]
+        public void PrefixedElement()
+        {
+            var doc = Shared.GetTestSample();
+            var diff = XDocument.Load(@"TestData\A01_Add\AddElement_PrefixedElement.xml");
+
+            Shared.Patcher.PatchXml(doc, diff);
+
+            var addedNode = doc.XPathSelectElement("//main")!.LastNode;
+            Assert.IsNotNull(addedNode, $"{nameof(addedNode)} is null");
+            Assert.AreEqual(XmlNodeType.Element, addedNode.NodeType);
+            Shared.TestWith((XElement)addedNode, addedElement =>
+            {
+                Assert.AreEqual("http://schemas.microsoft.com/winfx/2006/xaml", addedElement.Name.NamespaceName);
+                Assert.AreEqual("child", addedElement.Name.LocalName);
+                Assert.AreEqual("3", addedElement.Attribute("id")!.Value);
             });
         }
 

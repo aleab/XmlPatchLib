@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -33,62 +32,66 @@ namespace Tizuby.XmlPatchLib.PatchOperations
             switch (this._type.Item1)
             {
                 case Type.None:
-                    PatchNormalAdd(targetElement, this.OperationNode, this._position);
+                    this.AddNodes(targetElement);
                     break;
+
                 case Type.Attribute:
-                    PatchAddAttribute(targetElement, this.OperationNode, this._type.Item2);
+                    var colon = this._type.Item2.IndexOf(':');
+                    var nsUri = colon > 0 ? nsResolver?.LookupNamespace(this._type.Item2.Substring(0, colon)) : null;
+                    var attributeName = string.IsNullOrWhiteSpace(nsUri) ? XName.Get(this._type.Item2) : XName.Get(this._type.Item2.Substring(colon + 1), nsUri);
+                    this.AddAttribute(targetElement, attributeName);
                     break;
+
                 case Type.Namespace:
-                    throw new NotImplementedException();
+                    this.AddNamespace(targetElement, this._type.Item2);
+                    break;
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(this._type.Item1), this._type.Item1, null);
             }
         }
 
-        /// <summary>
-        ///     Handles adding a new element to a target element.
-        /// </summary>
-        /// <param name="targetElement">The target to add to.</param>
-        /// <param name="operationNode">The add element.</param>
-        /// <exception cref="XmlException"></exception>
-        [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
-        private static void PatchNormalAdd(XElement targetElement, XElement operationNode, Position pos)
+        private void AddNodes(XContainer target)
         {
-            switch (pos)
+            var nodes = this.OperationNode.Nodes();
+            switch (this._position)
             {
                 case Position.Append:
-                    targetElement.Add(operationNode.Elements());
+                    target.Add(nodes);
                     break;
                 case Position.Before:
-                    targetElement.AddBeforeSelf(operationNode.Elements());
+                    target.AddBeforeSelf(nodes);
                     break;
                 case Position.After:
-                    targetElement.AddAfterSelf(operationNode.Elements());
+                    target.AddAfterSelf(nodes);
                     break;
                 case Position.Prepend:
-                    targetElement.AddFirst(operationNode.Elements());
+                    target.AddFirst(nodes);
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(pos), pos, null);
+                    throw new ArgumentOutOfRangeException(nameof(this._position), this._position, null);
             }
         }
 
-        /// <summary>
-        ///     Handles adding a type attribute to an existing element.
-        /// </summary>
-        /// <param name="targetElement">The target element to add the attribute to.</param>
-        /// <param name="operationNode">The element containing the text value to add as the value of the new attribute.</param>
-        /// <param name="attributeName">The [qualified] name of the new attribute.</param>
-        [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
-        private static void PatchAddAttribute(XElement targetElement, XElement operationNode, string attributeName)
+        private void AddAttribute(XElement targetElement, XName attributeName, bool isNamespace = false)
         {
-            // There's a type included, which means it wants to add an attribute. Make sure the first non-comment element is a text element.
-            var textNode = operationNode.Nodes().FirstOrDefault(n => n.NodeType == XmlNodeType.Text);
+            var content = this.OperationNode.Nodes().ToList();
 
-            var attributeValue = textNode?.ToString()?.Trim() ?? "";
-            var attribute = new XAttribute(attributeName, attributeValue);
+            var isValidTextContent = content.Count == 0 || (content.Count == 1 && content[0].NodeType == XmlNodeType.Text);
+            if (!isValidTextContent)
+                throw new InvalidOperationException($"An <add> operation targeting {(isNamespace ? "a namespace" : "an attribute")} may have at most one node and it MUST be text.");
 
-            targetElement.Add(attribute);
+            if (targetElement.Attribute(attributeName) != null)
+                throw new InvalidOperationException($"Target element already has {(isNamespace ? "namespace" : "attribute")} \"{attributeName}\"");
+
+            var attributeValue = content.FirstOrDefault()?.ToString()?.Trim() ?? string.Empty;
+            targetElement.SetAttributeValue(attributeName, attributeValue);
+        }
+
+        private void AddNamespace(XElement targetElement, string nsPrefix)
+        {
+            var attributeName = string.IsNullOrWhiteSpace(nsPrefix) ? XName.Get("xmlns", "") : XName.Get(nsPrefix, "http://www.w3.org/2000/xmlns/");
+            this.AddAttribute(targetElement, attributeName, true);
         }
 
         private static Position ParsePosition(string pos, XElement context)

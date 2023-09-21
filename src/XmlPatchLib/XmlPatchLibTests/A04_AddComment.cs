@@ -10,6 +10,7 @@ namespace XmlPatchLibTests
     ///     https://datatracker.ietf.org/doc/html/rfc5261#appendix-A.4
     /// </summary>
     [TestClass]
+    [TestCategory("<add>")]
     public class A04_AddComment
     {
         [TestMethod]

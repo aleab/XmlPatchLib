@@ -11,6 +11,7 @@ namespace XmlPatchLibTests
     ///     https://datatracker.ietf.org/doc/html/rfc5261#appendix-A.5
     /// </summary>
     [TestClass]
+    [TestCategory("<add>")]
     public class A05_AddMultiple
     {
         [TestMethod]
@@ -19,6 +20,7 @@ namespace XmlPatchLibTests
             var doc = Shared.GetTestSample();
             var diff = XDocument.Load(@"TestData\A05_Add\AddMultiple_Prepend.xml");
 
+            var firstNodeBeforePatch = doc.XPathSelectElement("//main")!.FirstNode;
             Shared.Patcher.PatchXml(doc, diff);
 
             var addedElement = doc.XPathSelectElement("//main/child[@id='3']");
@@ -26,7 +28,8 @@ namespace XmlPatchLibTests
             Assert.AreSame(doc.XPathSelectElement("//main")!.FirstNode, addedElement);
 
             var lastNode = TestNextNodes(addedElement);
-            Assert.AreEqual(XmlNodeType.Element, lastNode.NextNode?.NodeType);
+            Assert.AreEqual(XmlNodeType.Comment, lastNode.NextNode?.NodeType);
+            Assert.AreSame(firstNodeBeforePatch, lastNode.NextNode);
         }
 
         [TestMethod]
@@ -35,6 +38,7 @@ namespace XmlPatchLibTests
             var doc = Shared.GetTestSample();
             var diff = XDocument.Load(@"TestData\A05_Add\AddMultiple_Append.xml");
 
+            var lastNodeBeforePatch = doc.XPathSelectElement("//main")!.LastNode;
             Shared.Patcher.PatchXml(doc, diff);
 
             var addedElement = doc.XPathSelectElement("//main/child[@id='3']");
@@ -43,6 +47,7 @@ namespace XmlPatchLibTests
 
             var lastNode = TestNextNodes(addedElement);
             Assert.AreSame(doc.XPathSelectElement("//main")!.LastNode, lastNode);
+            Assert.AreSame(lastNodeBeforePatch, addedElement.PreviousNode);
         }
 
         [TestMethod]
@@ -78,7 +83,6 @@ namespace XmlPatchLibTests
             });
 
             var lastNode = TestNextNodes(addedElement);
-            Assert.AreSame(doc.XPathSelectElement("//main")!.LastNode, lastNode);
 
             Assert.AreEqual(XmlNodeType.Element, lastNode.NextNode?.NodeType);
             Shared.TestWith((XElement)lastNode.NextNode!, next =>
@@ -93,12 +97,12 @@ namespace XmlPatchLibTests
             var nextAddedNode = addedElement.NextNode;
             Assert.IsNotNull(nextAddedNode, $"2nd {nameof(nextAddedNode)} is null");
             Assert.AreEqual(XmlNodeType.Comment, nextAddedNode.NodeType);
-            Assert.AreEqual(" Comment Node ", ((XComment)nextAddedNode).Value);
+            Assert.AreEqual(" New Comment ", ((XComment)nextAddedNode).Value);
 
-            nextAddedNode = addedElement.NextNode;
+            nextAddedNode = nextAddedNode.NextNode;
             Assert.IsNotNull(nextAddedNode, $"3rd {nameof(nextAddedNode)} is null");
             Assert.AreEqual(XmlNodeType.Text, nextAddedNode.NodeType);
-            Assert.IsTrue(Regex.IsMatch(((XText)nextAddedNode).Value, @"\n\s*TextNode\n\s*"));
+            Assert.IsTrue(Regex.IsMatch(((XText)nextAddedNode).Value, @"\n\s*Text Node\n\s*"));
 
             return nextAddedNode;
         }
