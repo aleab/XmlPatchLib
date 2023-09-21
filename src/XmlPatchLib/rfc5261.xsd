@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE schema [
-  <!ENTITY i          "[_A-Za-z]">
-  <!ENTITY c          "[-._A-Za-z0-9]">
-  <!ENTITY ncname     "&i;&c;*">
+  <!ENTITY ncname     "[\i-[:]][\c-[:]]*">
   <!ENTITY qname      "(&ncname;:)?&ncname;">
   <!ENTITY aname      "@&qname;">
   <!-- Axes -->
@@ -42,21 +40,13 @@
       <xs:pattern value="/{0,2}(&step;//?)*&laststep;" />
     </xs:restriction>
   </xs:simpleType>
-
   <xs:simpleType name="xpath-add">
     <xs:restriction base="xs:string">
       <xs:pattern value="/{0,2}(&step;//?)*&step;" />
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:simpleType name="type">
-    <xs:restriction base="xs:string">
-      <xs:pattern value="&aname;|namespace(::&ncname;)?" />
-    </xs:restriction>
-  </xs:simpleType>
-
   <!-- <add> -->
-
   <xs:complexType name="add">
     <xs:complexContent mixed="true">
       <xs:restriction base="xs:anyType">
@@ -77,9 +67,13 @@
       <xs:enumeration value="prepend" />
     </xs:restriction>
   </xs:simpleType>
+  <xs:simpleType name="type">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="&aname;|namespace(::&ncname;)?" />
+    </xs:restriction>
+  </xs:simpleType>
 
   <!-- <replace> -->
-
   <xs:complexType name="replace">
     <xs:complexContent mixed="true">
       <xs:restriction base="xs:anyType">
@@ -92,7 +86,6 @@
   </xs:complexType>
 
   <!-- <remove> -->
-
   <xs:complexType name="remove">
     <xs:attribute name="sel" type="xpath" use="required" />
     <xs:attribute name="ws" type="ws" />

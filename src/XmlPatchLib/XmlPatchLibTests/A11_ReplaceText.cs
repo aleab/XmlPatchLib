@@ -27,17 +27,12 @@ namespace XmlPatchLibTests
         }
 
         [TestMethod]
-        public void WithElement()
+        public void WithDifferentNodeType_ShouldThrowException()
         {
             var doc = Shared.GetTestSample();
             var diff = XDocument.Load(@"TestData\A11_Replace\ReplaceText_WithElement.xml");
 
-            Shared.Patcher.PatchXml(doc, diff);
-
-            var child1 = doc.XPathSelectElement("//main/child[@id='1']")!;
-            Assert.AreEqual(1, child1.Nodes().Count());
-            Assert.AreEqual(XmlNodeType.Element, child1.FirstNode!.NodeType);
-            Assert.AreEqual("child", ((XElement)child1.FirstNode).Name.LocalName);
+            Assert.ThrowsException<InvalidOperationException>(() => Shared.Patcher.PatchXml(doc, diff));
         }
 
         [TestMethod]

@@ -1,11 +1,15 @@
 ﻿using System.Linq;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
 namespace Tizuby.XmlPatchLib
 {
-    internal static class XmlToStringHelper
+    internal static class Util
     {
-        public static string Head(XElement element)
+        public static Regex XmlNCName = new Regex("[_A-Za-z][-._A-Za-z0-9]*");
+        public static Regex XmlQName = new Regex($"({XmlNCName}:)?{XmlNCName}");
+
+        public static string ToString(XElement element)
         {
             if (element != null)
             {
