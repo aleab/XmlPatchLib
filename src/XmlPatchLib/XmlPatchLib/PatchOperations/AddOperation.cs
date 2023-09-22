@@ -13,7 +13,6 @@ namespace Tizuby.XmlPatchLib.PatchOperations
 
         public enum Type { None, Attribute, Namespace }
 
-        private static readonly Regex AttributeRegex = new Regex($"^@({Utils.XmlQName})$");
         private static readonly Regex NsRegex = new Regex($"^namespace(?:::({Utils.XmlNCName}))?$");
 
         private readonly Position _position;
@@ -109,7 +108,7 @@ namespace Tizuby.XmlPatchLib.PatchOperations
             switch (type)
             {
                 case null:                                                 return (Type.None, null);
-                case var _ when AttributeRegex.IsMatch(type):              return (Type.Attribute, type.Substring(1));
+                case var _ when type.StartsWith("@"):                      return (Type.Attribute, type.Substring(1));
                 case var _ when NsRegex.Match(type) is var m && m.Success: return (Type.Namespace, m.Groups[1].Value);
                 default:
                     throw new XmlPatcherParsingException($"Invalid <add> \"type\" value: \"{type}\"", context);
