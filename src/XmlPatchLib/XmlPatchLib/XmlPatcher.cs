@@ -25,7 +25,7 @@ namespace Tizuby.XmlPatchLib
             this.UseBestEffort = options.UseBestEffort;
             this.XPathEvaluator = options.XPathEvaluator ?? new DefaultXPathEvaluator();
 
-            if (!Util.XmlNCName.IsMatch(this.RootElementName))
+            if (!Utils.XmlNCName.IsMatch(this.RootElementName))
                 throw new ArgumentException($"\"{this.RootElementName}\" is not a valid XML tag name.");
         }
 
@@ -58,8 +58,8 @@ namespace Tizuby.XmlPatchLib
 
             var exceptionList = new List<Exception>();
 
-            var sourceNamespaceResolver = GetNamespaceResolver(sourceDocument);
-            var patchNamespaceResolver = GetNamespaceResolver(patchDocument);
+            var sourceNamespaceResolver = sourceDocument.GetNamespaceResolver();
+            var patchNamespaceResolver = patchDocument.GetNamespaceResolver();
 
             foreach (var operationNode in root.Elements())
             {
@@ -79,23 +79,6 @@ namespace Tizuby.XmlPatchLib
             }
 
             return exceptionList;
-        }
-
-        private static IXmlNamespaceResolver GetNamespaceResolver(XDocument doc, string defaultNamespace = null)
-        {
-            if (doc?.Root == null)
-                return null;
-
-            var resolver = new XmlNamespaceManager(new NameTable());
-            foreach (var ns in doc.Root.GetNamespaceMap())
-            {
-                if (!string.IsNullOrWhiteSpace(ns.Key))
-                    resolver.AddNamespace(ns.Key, ns.Value);
-                else if (defaultNamespace != null)
-                    resolver.AddNamespace(defaultNamespace.Trim(), ns.Value);
-            }
-
-            return resolver;
         }
     }
 }

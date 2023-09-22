@@ -13,8 +13,8 @@ namespace Tizuby.XmlPatchLib.PatchOperations
 
         public enum Type { None, Attribute, Namespace }
 
-        private static readonly Regex AttributeRegex = new Regex($"^@({Util.XmlQName})$");
-        private static readonly Regex NsRegex = new Regex($"^namespace(?:::({Util.XmlNCName}))?$");
+        private static readonly Regex AttributeRegex = new Regex($"^@({Utils.XmlQName})$");
+        private static readonly Regex NsRegex = new Regex($"^namespace(?:::({Utils.XmlNCName}))?$");
 
         private readonly Position _position;
         private readonly (Type, string) _type;
@@ -25,7 +25,7 @@ namespace Tizuby.XmlPatchLib.PatchOperations
             this._type = ParseType(operationNode.Attribute("type")?.Value, this.OperationNode);
         }
 
-        public override void Apply(XDocument sourceDocument, IXPathEvaluator xPathEvaluator, IXmlNamespaceResolver nsResolver = null)
+        protected override void ApplyPatch(XDocument sourceDocument, IXPathEvaluator xPathEvaluator, IXmlNamespaceResolver nsResolver)
         {
             var targetElement = xPathEvaluator.SelectSingle<XElement>(sourceDocument, this.XPathExpression, nsResolver);
 
@@ -36,10 +36,7 @@ namespace Tizuby.XmlPatchLib.PatchOperations
                     break;
 
                 case Type.Attribute:
-                    var colon = this._type.Item2.IndexOf(':');
-                    var nsUri = colon > 0 ? nsResolver?.LookupNamespace(this._type.Item2.Substring(0, colon)) : null;
-                    var attributeName = string.IsNullOrWhiteSpace(nsUri) ? XName.Get(this._type.Item2) : XName.Get(this._type.Item2.Substring(colon + 1), nsUri);
-                    this.AddAttribute(targetElement, attributeName);
+                    this.AddAttribute(targetElement, Utils.GetXName(this._type.Item2, nsResolver));
                     break;
 
                 case Type.Namespace:

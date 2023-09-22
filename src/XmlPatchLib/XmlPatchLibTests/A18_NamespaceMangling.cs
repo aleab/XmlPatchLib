@@ -1,6 +1,7 @@
 ﻿using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using Tizuby.XmlPatchLib;
 
 // ReSharper disable InconsistentNaming
 
@@ -19,7 +20,7 @@ namespace XmlPatchLibTests
             var diff = XDocument.Load(@"TestData\A18_NamespaceMangling\NamespaceMangling.xml");
 
             var nsResolver = new XmlNamespaceManager(new NameTable());
-            foreach (var ns in GetNamespaceMap(doc.Root!))
+            foreach (var ns in doc.Root!.GetNamespaceMap())
             {
                 nsResolver.AddNamespace(string.IsNullOrWhiteSpace(ns.Key) ? "default" : ns.Key, ns.Value);
             }
@@ -41,13 +42,6 @@ namespace XmlPatchLibTests
                     Assert.AreSame(child, doc.XPathSelectElement("//x:elem/default:child"));
                 });
             });
-        }
-
-        private static Dictionary<string, string> GetNamespaceMap(XElement element)
-        {
-            return element
-               .Attributes().Where(attr => attr.IsNamespaceDeclaration)
-               .ToDictionary(x => x.Name.LocalName == "xmlns" ? string.Empty : x.Name.LocalName, x => x.Value);
         }
     }
 }

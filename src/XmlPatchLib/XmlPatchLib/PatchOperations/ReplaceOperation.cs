@@ -10,7 +10,7 @@ namespace Tizuby.XmlPatchLib.PatchOperations
     {
         public ReplaceOperation(string sel, XElement operationNode) : base(sel, operationNode) { }
 
-        public override void Apply(XDocument sourceDocument, IXPathEvaluator xPathEvaluator, IXmlNamespaceResolver nsResolver = null)
+        protected override void ApplyPatch(XDocument sourceDocument, IXPathEvaluator xPathEvaluator, IXmlNamespaceResolver nsResolver)
         {
             var content = this.OperationNode.Nodes().ToList();
             var target = xPathEvaluator.SelectSingle<XObject>(sourceDocument, this.XPathExpression, nsResolver);
@@ -20,13 +20,13 @@ namespace Tizuby.XmlPatchLib.PatchOperations
             {
                 case var _ when target is XAttribute attribute:
                     if (!isValidTextContent)
-                        throw new InvalidOperationException("A \"replace\" operation targeting an attribute may have at most one node and it MUST be text.");
+                        throw new InvalidOperationException("A <replace> operation targeting an attribute may have at most one node and it MUST be text.");
                     attribute.SetValue(this.OperationNode.Value);
                     break;
 
                 case var _ when target is XText textNode:
                     if (!isValidTextContent)
-                        throw new InvalidOperationException("A \"replace\" operation targeting a text node may have at most one node and it MUST be text.");
+                        throw new InvalidOperationException("A <replace> operation targeting a text node may have at most one node and it MUST be text.");
                     textNode.Value = this.OperationNode.Value;
                     break;
 

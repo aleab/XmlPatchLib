@@ -16,7 +16,7 @@ namespace Tizuby.XmlPatchLib.PatchOperations
             this._whitespace = ParseWhitespace(operationNode.Attribute("ws")?.Value, this.OperationNode);
         }
 
-        public override void Apply(XDocument sourceDocument, IXPathEvaluator xPathEvaluator, IXmlNamespaceResolver nsResolver = null)
+        protected override void ApplyPatch(XDocument sourceDocument, IXPathEvaluator xPathEvaluator, IXmlNamespaceResolver nsResolver)
         {
             // TODO: Support ws removal for sibling whitespace nodes.
             var target = xPathEvaluator.SelectSingle<XObject>(sourceDocument, this.XPathExpression, nsResolver);

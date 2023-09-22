@@ -6,4 +6,10 @@
     <AssemblyName>Tizuby.XmlPatchLib</AssemblyName>
   </PropertyGroup>
 
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>XmlPatchLibTests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
 </Project>

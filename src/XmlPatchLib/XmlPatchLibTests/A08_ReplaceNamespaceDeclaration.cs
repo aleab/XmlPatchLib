@@ -1,5 +1,5 @@
 ﻿using System.Xml.Linq;
-using System.Xml.XPath;
+using Tizuby.XmlPatchLib;
 
 // ReSharper disable InconsistentNaming
 
@@ -19,7 +19,7 @@ namespace XmlPatchLibTests
 
             Shared.Patcher.PatchXml(doc, diff);
 
-            var nsmap = GetNamespaceMap(doc.Root!);
+            var nsmap = doc.Root!.GetNamespaceMap();
             Assert.AreEqual("urn:ns:x", nsmap["x"]);
         }
 
@@ -31,7 +31,7 @@ namespace XmlPatchLibTests
 
             Shared.Patcher.PatchXml(doc, diff);
 
-            var nsmap = GetNamespaceMap(doc.Root!);
+            var nsmap = doc.Root!.GetNamespaceMap();
             Assert.AreEqual("urn:ns:empty", nsmap[""]);
         }
 
@@ -42,13 +42,6 @@ namespace XmlPatchLibTests
             var diff = XDocument.Load(@"TestData\A08_Replace\ReplaceNamespaceDeclaration.xml");
 
             Assert.ThrowsException<InvalidOperationException>(() => Shared.Patcher.PatchXml(doc, diff));
-        }
-
-        private static Dictionary<string, string> GetNamespaceMap(XElement element)
-        {
-            return element
-               .Attributes().Where(attr => attr.IsNamespaceDeclaration)
-               .ToDictionary(x => x.Name.LocalName == "xmlns" ? string.Empty : x.Name.LocalName, x => x.Value);
         }
     }
 }
