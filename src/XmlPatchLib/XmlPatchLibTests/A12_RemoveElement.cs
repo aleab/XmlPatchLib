@@ -10,6 +10,7 @@ namespace XmlPatchLibTests
     ///     https://datatracker.ietf.org/doc/html/rfc5261#appendix-A.12
     /// </summary>
     [TestClass]
+    [TestCategory("<remove>")]
     public class A12_RemoveElement
     {
         [TestMethod]
@@ -78,6 +79,22 @@ namespace XmlPatchLibTests
             Assert.IsNull(wsBefore.Document, "previous whitespace node was not removed");
             Assert.IsNull(wsAfter.Document, "following whitespace node was not removed");
             Assert.AreEqual(nodeCount - 3, doc.XPathSelectElement("//main")!.Nodes().Count());
+        }
+
+        [TestMethod]
+        public void WhiteSpace_None_ShouldCombinePrevAndNextWhitespaces()
+        {
+            var doc = Shared.GetTestSample(LoadOptions.PreserveWhitespace);
+            var diff = XDocument.Load(@"TestData\A12_Remove\RemoveElement.xml");
+
+            var child = doc.XPathSelectElement("//main/child[@id='1']")!;
+            var wsBefore = child.PreviousNode!;
+            var wsAfter = child.NextNode!;
+
+            Shared.Patcher.PatchXml(doc, diff);
+
+            Assert.IsNotNull(wsBefore.Document, "previous whitespace node was removed");
+            Assert.IsNull(wsAfter.Document, "following whitespace node was not removed");
         }
     }
 }

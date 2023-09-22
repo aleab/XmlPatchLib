@@ -10,6 +10,7 @@ namespace XmlPatchLibTests
     ///     https://datatracker.ietf.org/doc/html/rfc5261#appendix-A.15
     /// </summary>
     [TestClass]
+    [TestCategory("<remove>")]
     public class A15_RemoveComment
     {
         [TestMethod]

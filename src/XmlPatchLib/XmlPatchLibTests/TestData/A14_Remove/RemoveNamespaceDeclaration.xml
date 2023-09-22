@@ -1,4 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<diff xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../rfc5261.xsd">
-    <remove sel="/original/namespace::x" />
+<diff xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../rfc5261.xsd"
+      xmlns:_="http://www.w3.org/2001/XMLSchema">
+    <remove sel="/_:original/namespace::x" />
 </diff>

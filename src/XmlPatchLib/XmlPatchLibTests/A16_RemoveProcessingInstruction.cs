@@ -10,6 +10,7 @@ namespace XmlPatchLibTests
     ///     https://datatracker.ietf.org/doc/html/rfc5261#appendix-A.16
     /// </summary>
     [TestClass]
+    [TestCategory("<remove>")]
     public class A16_RemoveProcessingInstruction
     {
         [TestMethod]

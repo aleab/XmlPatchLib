@@ -18,7 +18,6 @@ namespace Tizuby.XmlPatchLib.PatchOperations
 
         protected override void ApplyPatch(XDocument sourceDocument, IXPathEvaluator xPathEvaluator, IXmlNamespaceResolver nsResolver)
         {
-            // TODO: Support ws removal for sibling whitespace nodes.
             var target = xPathEvaluator.SelectSingle<XObject>(sourceDocument, this.XPathExpression, nsResolver);
 
             switch (target)
@@ -28,12 +27,33 @@ namespace Tizuby.XmlPatchLib.PatchOperations
                     break;
 
                 case var _ when target is XNode node:
+                    if (node.NodeType != XmlNodeType.Text)
+                        RemoveWhitespaceNodes(node, this._whitespace);
                     node.Remove();
                     break;
 
                 default:
                     throw new InvalidOperationException($"Unexpected target node type: {target.NodeType}.");
             }
+        }
+
+        private static void RemoveWhitespaceNodes(XNode node, Whitespace ws)
+        {
+            // From section 4.5 of the RFC:
+            //    When removing an element, a comment, or a processing instruction node that has immediate preceding and following sibling text nodes without
+            //    the 'ws' directive, the content of these two text nodes MUST be combined together. The latter text node thus disappears from the document.
+
+            if (ws == Whitespace.None)
+            {
+                if (node.PreviousNode.IsWhitespace() && node.NextNode.IsWhitespace())
+                    node.NextNode.Remove();
+                return;
+            }
+
+            if ((ws == Whitespace.Before || ws == Whitespace.Both) && node.PreviousNode.IsWhitespace())
+                node.PreviousNode.Remove();
+            if ((ws == Whitespace.After || ws == Whitespace.Both) && node.NextNode.IsWhitespace())
+                node.NextNode.Remove();
         }
 
         private static Whitespace ParseWhitespace(string ws, XElement context)

@@ -51,6 +51,13 @@ namespace Tizuby.XmlPatchLib
                 : XName.Get(name);
         }
 
+        public static bool IsWhitespace(this XNode node)
+        {
+            if (node == null)
+                return false;
+            return node.NodeType == XmlNodeType.Whitespace || (node.NodeType == XmlNodeType.Text && string.IsNullOrWhiteSpace(((XText)node).Value));
+        }
+
         public static string ToString(XElement element)
         {
             if (element != null)

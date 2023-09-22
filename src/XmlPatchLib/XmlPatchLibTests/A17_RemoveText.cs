@@ -9,6 +9,7 @@ namespace XmlPatchLibTests
     ///     https://datatracker.ietf.org/doc/html/rfc5261#appendix-A.17
     /// </summary>
     [TestClass]
+    [TestCategory("<remove>")]
     public class A17_RemoveText
     {
         [TestMethod]

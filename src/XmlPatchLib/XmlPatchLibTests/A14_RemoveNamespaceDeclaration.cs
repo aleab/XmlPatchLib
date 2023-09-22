@@ -9,6 +9,7 @@ namespace XmlPatchLibTests
     ///     https://datatracker.ietf.org/doc/html/rfc5261#appendix-A.14
     /// </summary>
     [TestClass]
+    [TestCategory("<remove>")]
     public class A14_RemoveNamespaceDeclaration
     {
         [TestMethod]
@@ -20,7 +21,7 @@ namespace XmlPatchLibTests
             Shared.Patcher.PatchXml(doc, diff);
 
             var nsmap = doc.Root!.GetNamespaceMap();
-            Assert.IsNull(nsmap["x"]);
+            Assert.ThrowsException<KeyNotFoundException>(() => nsmap["x"]);
         }
 
         [TestMethod]
@@ -32,14 +33,14 @@ namespace XmlPatchLibTests
             Shared.Patcher.PatchXml(doc, diff);
 
             var nsmap = doc.Root!.GetNamespaceMap();
-            Assert.IsNull(nsmap[""]);
+            Assert.ThrowsException<KeyNotFoundException>(() => nsmap[""]);
         }
 
         [TestMethod]
         public void MissingNamespace_ShouldThrowException()
         {
             var doc = Shared.GetTestSample();
-            var diff = XDocument.Load(@"TestData\A14_Remove\RemoveNamespaceDeclaration.xml");
+            var diff = XDocument.Load(@"TestData\A14_Remove\RemoveNamespaceDeclaration_Missing.xml");
 
             Assert.ThrowsException<InvalidOperationException>(() => Shared.Patcher.PatchXml(doc, diff));
         }
