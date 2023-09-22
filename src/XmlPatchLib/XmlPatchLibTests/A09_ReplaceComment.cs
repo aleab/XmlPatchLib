@@ -10,6 +10,7 @@ namespace XmlPatchLibTests
     ///     https://datatracker.ietf.org/doc/html/rfc5261#appendix-A.9
     /// </summary>
     [TestClass]
+    [TestCategory("<replace>")]
     public class A09_ReplaceComment
     {
         [TestMethod]
@@ -34,6 +35,15 @@ namespace XmlPatchLibTests
         {
             var doc = Shared.GetTestSample();
             var diff = XDocument.Load(@"TestData\A09_Replace\ReplaceComment_Missing.xml");
+
+            Assert.ThrowsException<InvalidOperationException>(() => Shared.Patcher.PatchXml(doc, diff));
+        }
+
+        [TestMethod]
+        public void WithDifferentNodeType_ShouldThrowException()
+        {
+            var doc = Shared.GetTestSample();
+            var diff = XDocument.Load(@"TestData\A09_Replace\ReplaceComment_WithDifferentNodeType.xml");
 
             Assert.ThrowsException<InvalidOperationException>(() => Shared.Patcher.PatchXml(doc, diff));
         }

@@ -10,6 +10,7 @@ namespace XmlPatchLibTests
     ///     https://datatracker.ietf.org/doc/html/rfc5261#appendix-A.11
     /// </summary>
     [TestClass]
+    [TestCategory("<replace>")]
     public class A11_ReplaceText
     {
         [TestMethod]
@@ -30,7 +31,7 @@ namespace XmlPatchLibTests
         public void WithDifferentNodeType_ShouldThrowException()
         {
             var doc = Shared.GetTestSample();
-            var diff = XDocument.Load(@"TestData\A11_Replace\ReplaceText_WithElement.xml");
+            var diff = XDocument.Load(@"TestData\A11_Replace\ReplaceText_WithDifferentNodeType.xml");
 
             Assert.ThrowsException<InvalidOperationException>(() => Shared.Patcher.PatchXml(doc, diff));
         }

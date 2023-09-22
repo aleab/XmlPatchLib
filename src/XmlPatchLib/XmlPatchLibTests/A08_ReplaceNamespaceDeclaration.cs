@@ -9,6 +9,7 @@ namespace XmlPatchLibTests
     ///     https://datatracker.ietf.org/doc/html/rfc5261#appendix-A.8
     /// </summary>
     [TestClass]
+    [TestCategory("<replace>")]
     public class A08_ReplaceNamespaceDeclaration
     {
         [TestMethod]
@@ -39,7 +40,16 @@ namespace XmlPatchLibTests
         public void MissingNamespace_ShouldThrowException()
         {
             var doc = Shared.GetTestSample();
-            var diff = XDocument.Load(@"TestData\A08_Replace\ReplaceNamespaceDeclaration.xml");
+            var diff = XDocument.Load(@"TestData\A08_Replace\ReplaceNamespaceDeclaration_Missing.xml");
+
+            Assert.ThrowsException<InvalidOperationException>(() => Shared.Patcher.PatchXml(doc, diff));
+        }
+
+        [TestMethod]
+        public void WithXNode_ShouldThrowException()
+        {
+            var doc = Shared.GetTestSample();
+            var diff = XDocument.Load(@"TestData\A08_Replace\ReplaceNamespaceDeclaration_WithXNode.xml");
 
             Assert.ThrowsException<InvalidOperationException>(() => Shared.Patcher.PatchXml(doc, diff));
         }

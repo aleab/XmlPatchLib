@@ -21,7 +21,7 @@ namespace Tizuby.XmlPatchLib
         //          "The 'sel' value is used to locate a single unique target node from the target XML document."
         //          "it is an error condition if multiple nodes are found during the evaluation of this selector value."
 
-        // TODO: DisableReplaceNodeTypeChecks
+        // TODO: DisableReplaceRestrictions
         //       Section 4.4 of the RFC states that
         //          "If the located target node is an element, a comment or a processing instruction, then the child of the <replace> element MUST also be of the same type"
         //          "the <replace> element MUST have text content or it MAY be empty when replacing [...] a text node content"

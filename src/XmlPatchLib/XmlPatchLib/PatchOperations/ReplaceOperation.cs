@@ -12,21 +12,17 @@ namespace Tizuby.XmlPatchLib.PatchOperations
 
         protected override void ApplyPatch(XDocument sourceDocument, IXPathEvaluator xPathEvaluator, IXmlNamespaceResolver nsResolver)
         {
-            var content = this.OperationNode.Nodes().ToList();
             var target = xPathEvaluator.SelectSingle<XObject>(sourceDocument, this.XPathExpression, nsResolver);
 
-            var isValidTextContent = content.Count == 0 || (content.Count == 1 && content[0].NodeType == XmlNodeType.Text);
+            this.CheckNodeTypeAndContent(target);
+
             switch (target)
             {
                 case var _ when target is XAttribute attribute:
-                    if (!isValidTextContent)
-                        throw new InvalidOperationException("A <replace> operation targeting an attribute may have at most one node and it MUST be text.");
                     attribute.SetValue(this.OperationNode.Value);
                     break;
 
                 case var _ when target is XText textNode:
-                    if (!isValidTextContent)
-                        throw new InvalidOperationException("A <replace> operation targeting a text node may have at most one node and it MUST be text.");
                     textNode.Value = this.OperationNode.Value;
                     break;
 
@@ -36,6 +32,28 @@ namespace Tizuby.XmlPatchLib.PatchOperations
 
                 default:
                     throw new InvalidOperationException($"Unexpected target node type: {target.NodeType}.");
+            }
+        }
+
+        private void CheckNodeTypeAndContent(XObject target)
+        {
+            var content = this.OperationNode.Nodes().ToList();
+
+            switch (target.NodeType)
+            {
+                case XmlNodeType.Attribute:
+                case XmlNodeType.Text:
+                    if (content.Count > 1 || (content.Count == 1 && content[0].NodeType != XmlNodeType.Text))
+                        throw new InvalidOperationException("A <replace> operation targeting an attribute, namespace or text node may have at most one node and it MUST be text.");
+                    break;
+
+                default:
+                    var type = target.GetType().Name;
+                    if (content.Count != 1)
+                        throw new InvalidOperationException($"A <replace> operation targeting a \"{type}\" MUST have exactly one node.");
+                    if (content[0].NodeType != target.NodeType)
+                        throw new InvalidOperationException($"A <replace> operation targeting a \"{type}\" MUST have exactly one node of the same type.");
+                    break;
             }
         }
     }
