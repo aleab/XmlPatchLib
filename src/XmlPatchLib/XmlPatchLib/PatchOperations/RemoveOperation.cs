@@ -13,7 +13,7 @@ namespace Tizuby.XmlPatchLib.PatchOperations
 
         public RemoveOperation(string sel, XElement operationNode) : base(sel, operationNode)
         {
-            this._whitespace = ParseWhitespace(operationNode.Attribute("ws")?.Value, this.OperationNode);
+            this._whitespace = ParseWhitespace(operationNode.Attribute("ws")?.Value);
         }
 
         protected override void ApplyPatch(XDocument sourceDocument, IXPathEvaluator xPathEvaluator, IXmlNamespaceResolver nsResolver)
@@ -56,7 +56,7 @@ namespace Tizuby.XmlPatchLib.PatchOperations
                 node.NextNode.Remove();
         }
 
-        private static Whitespace ParseWhitespace(string ws, XElement context)
+        private static Whitespace ParseWhitespace(string ws)
         {
             switch (ws)
             {
@@ -65,7 +65,7 @@ namespace Tizuby.XmlPatchLib.PatchOperations
                 case "after":  return Whitespace.After;
                 case "both":   return Whitespace.Both;
                 default:
-                    throw new XmlPatcherParsingException($"Invalid <remove> \"ws\" value: \"{ws}\"", context);
+                    throw new InvalidAttributeValueException("ws", ws, new[] { "before", "after", "both" }, true);
             }
         }
     }

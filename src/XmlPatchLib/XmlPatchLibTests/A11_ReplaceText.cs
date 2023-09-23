@@ -1,6 +1,7 @@
 ﻿using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using Tizuby.XmlPatchLib;
 
 // ReSharper disable InconsistentNaming
 
@@ -33,7 +34,7 @@ namespace XmlPatchLibTests
             var doc = Shared.GetTestSample();
             var diff = XDocument.Load(@"TestData\A11_Replace\ReplaceText_WithDifferentNodeType.xml");
 
-            Assert.ThrowsException<InvalidOperationException>(() => Shared.Patcher.PatchXml(doc, diff));
+            Assert.ThrowsException<InvalidNodeTypeException>(() => Shared.Patcher.PatchXml(doc, diff));
         }
 
         [TestMethod]
@@ -42,7 +43,7 @@ namespace XmlPatchLibTests
             var doc = Shared.GetTestSample();
             var diff = XDocument.Load(@"TestData\A11_Replace\ReplaceText_EmptyNode.xml");
 
-            Assert.ThrowsException<InvalidOperationException>(() => Shared.Patcher.PatchXml(doc, diff));
+            Assert.ThrowsException<UnlocatedNodeException>(() => Shared.Patcher.PatchXml(doc, diff));
         }
     }
 }

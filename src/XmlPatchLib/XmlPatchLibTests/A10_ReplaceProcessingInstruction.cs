@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using Tizuby.XmlPatchLib;
 
 // ReSharper disable InconsistentNaming
 
@@ -36,7 +37,7 @@ namespace XmlPatchLibTests
             var doc = Shared.GetTestSample();
             var diff = XDocument.Load(@"TestData\A10_Replace\ReplaceProcessingInstruction_Missing.xml");
 
-            Assert.ThrowsException<InvalidOperationException>(() => Shared.Patcher.PatchXml(doc, diff));
+            Assert.ThrowsException<UnlocatedNodeException>(() => Shared.Patcher.PatchXml(doc, diff));
         }
 
         [TestMethod]
@@ -45,7 +46,7 @@ namespace XmlPatchLibTests
             var doc = Shared.GetTestSample();
             var diff = XDocument.Load(@"TestData\A10_Replace\ReplaceProcessingInstruction_WithDifferentNodeType.xml");
 
-            Assert.ThrowsException<InvalidOperationException>(() => Shared.Patcher.PatchXml(doc, diff));
+            Assert.ThrowsException<InvalidNodeTypeException>(() => Shared.Patcher.PatchXml(doc, diff));
         }
     }
 }

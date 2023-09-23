@@ -1,5 +1,6 @@
 ﻿using System.Xml.Linq;
 using System.Xml.XPath;
+using Tizuby.XmlPatchLib;
 
 // ReSharper disable InconsistentNaming
 
@@ -35,7 +36,7 @@ namespace XmlPatchLibTests
             var doc = Shared.GetTestSample();
             var diff = XDocument.Load(@"TestData\A06_Replace\ReplaceElement_Missing.xml");
 
-            Assert.ThrowsException<InvalidOperationException>(() => Shared.Patcher.PatchXml(doc, diff));
+            Assert.ThrowsException<UnlocatedNodeException>(() => Shared.Patcher.PatchXml(doc, diff));
 
             var child = doc.XPathSelectElement("//main/child[@id='3']");
             Assert.IsNull(child);
@@ -47,7 +48,7 @@ namespace XmlPatchLibTests
             var doc = Shared.GetTestSample();
             var diff = XDocument.Load(@"TestData\A06_Replace\ReplaceElement_WithDifferentNodeType.xml");
 
-            Assert.ThrowsException<InvalidOperationException>(() => Shared.Patcher.PatchXml(doc, diff));
+            Assert.ThrowsException<InvalidNodeTypeException>(() => Shared.Patcher.PatchXml(doc, diff));
         }
 
         [TestMethod]
@@ -56,7 +57,7 @@ namespace XmlPatchLibTests
             var doc = Shared.GetTestSample();
             var diff = XDocument.Load(@"TestData\A06_Replace\ReplaceElement_WithMultipleNodes.xml");
 
-            Assert.ThrowsException<InvalidOperationException>(() => Shared.Patcher.PatchXml(doc, diff));
+            Assert.ThrowsException<InvalidNodeTypeException>(() => Shared.Patcher.PatchXml(doc, diff));
         }
     }
 }

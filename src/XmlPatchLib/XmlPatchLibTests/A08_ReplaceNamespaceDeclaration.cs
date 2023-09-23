@@ -42,16 +42,16 @@ namespace XmlPatchLibTests
             var doc = Shared.GetTestSample();
             var diff = XDocument.Load(@"TestData\A08_Replace\ReplaceNamespaceDeclaration_Missing.xml");
 
-            Assert.ThrowsException<InvalidOperationException>(() => Shared.Patcher.PatchXml(doc, diff));
+            Assert.ThrowsException<UnlocatedNodeException>(() => Shared.Patcher.PatchXml(doc, diff));
         }
 
         [TestMethod]
         public void WithXNode_ShouldThrowException()
         {
-            var doc = Shared.GetTestSample();
+            var doc = Shared.GetTestSampleWithNamespaces();
             var diff = XDocument.Load(@"TestData\A08_Replace\ReplaceNamespaceDeclaration_WithXNode.xml");
 
-            Assert.ThrowsException<InvalidOperationException>(() => Shared.Patcher.PatchXml(doc, diff));
+            Assert.ThrowsException<InvalidNodeTypeException>(() => Shared.Patcher.PatchXml(doc, diff));
         }
     }
 }

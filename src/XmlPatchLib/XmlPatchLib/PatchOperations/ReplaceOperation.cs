@@ -44,15 +44,15 @@ namespace Tizuby.XmlPatchLib.PatchOperations
                 case XmlNodeType.Attribute:
                 case XmlNodeType.Text:
                     if (content.Count > 1 || (content.Count == 1 && content[0].NodeType != XmlNodeType.Text))
-                        throw new InvalidOperationException("A <replace> operation targeting an attribute, namespace or text node may have at most one node and it MUST be text.");
+                        throw new InvalidNodeTypeException("A <replace> operation targeting an attribute, namespace or text node may have at most one node and it MUST be text.");
                     break;
 
                 default:
                     var type = target.GetType().Name;
                     if (content.Count != 1)
-                        throw new InvalidOperationException($"A <replace> operation targeting a \"{type}\" MUST have exactly one node.");
+                        throw new InvalidNodeTypeException($"A <replace> operation targeting a \"{type}\" MUST have exactly one node.");
                     if (content[0].NodeType != target.NodeType)
-                        throw new InvalidOperationException($"A <replace> operation targeting a \"{type}\" MUST have exactly one node of the same type.");
+                        throw new InvalidNodeTypeException($"A <replace> operation targeting a \"{type}\" MUST have exactly one node of the same type.");
                     break;
             }
         }

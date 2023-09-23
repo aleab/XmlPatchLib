@@ -35,9 +35,9 @@ namespace Tizuby.XmlPatchLib
         /// <param name="sourceDocument">The original XML document to patch.</param>
         /// <param name="patchDocument">The diff XML document containing the patch operations.</param>
         /// <returns>A list of encountered exceptions when useBestEffort is true.</returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="XmlException"></exception>
-        /// <exception cref="XmlPatcherParsingException"></exception>
+        /// <exception cref="ArgumentNullException">One of the documents is null.</exception>
+        /// <exception cref="XmlException">The root of one of the documents is null.</exception>
+        /// <exception cref="XmlPatcherException"></exception>
         public IEnumerable<Exception> PatchXml(XDocument sourceDocument, XDocument patchDocument)
         {
             if (sourceDocument == null)
@@ -52,7 +52,7 @@ namespace Tizuby.XmlPatchLib
 
             var root = patchDocument.Root;
             if (root.Name.LocalName != this.RootElementName)
-                throw new XmlPatcherParsingException($"The patch document's root is \"{root.Name.LocalName}\"; expected \"{this.RootElementName}\"", root);
+                throw new InvalidDiffFormatException($"The patch document's root is \"{root.Name.LocalName}\"; expected \"{this.RootElementName}\"");
 
             // TODO: Use a validator on the diff doc. Any original doc is considered valid.
 
@@ -63,17 +63,16 @@ namespace Tizuby.XmlPatchLib
 
             foreach (var operationNode in root.Elements())
             {
-                var operation = PatchOperation.Parse(operationNode);
-
                 try
                 {
-                    operation?.Apply(sourceDocument, this.XPathEvaluator, patchNamespaceResolver);
+                    var operation = PatchOperation.Parse(operationNode);
+                    operation.Apply(sourceDocument, this.XPathEvaluator, patchNamespaceResolver);
                 }
                 catch (Exception ex)
                 {
                     if (!this.UseBestEffort)
                         throw;
-                    if (ex is XmlPatcherParsingException || ex is XPathException || ex is InvalidOperationException)
+                    if (ex is XmlPatcherException || ex is XPathException || ex is InvalidOperationException)
                         exceptionList.Add(ex);
                 }
             }

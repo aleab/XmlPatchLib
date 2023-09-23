@@ -20,8 +20,8 @@ namespace Tizuby.XmlPatchLib.PatchOperations
 
         public AddOperation(string sel, XElement operationNode) : base(sel, operationNode)
         {
-            this._position = ParsePosition(operationNode.Attribute("pos")?.Value, this.OperationNode);
-            this._type = ParseType(operationNode.Attribute("type")?.Value, this.OperationNode);
+            this._position = ParsePosition(operationNode.Attribute("pos")?.Value);
+            this._type = ParseType(operationNode.Attribute("type")?.Value);
         }
 
         protected override void ApplyPatch(XDocument sourceDocument, IXPathEvaluator xPathEvaluator, IXmlNamespaceResolver nsResolver)
@@ -75,10 +75,10 @@ namespace Tizuby.XmlPatchLib.PatchOperations
 
             var isValidTextContent = content.Count == 0 || (content.Count == 1 && content[0].NodeType == XmlNodeType.Text);
             if (!isValidTextContent)
-                throw new InvalidOperationException($"An <add> operation targeting {(isNamespace ? "a namespace" : "an attribute")} may have at most one node and it MUST be text.");
+                throw new InvalidPatchDirectiveException($"An <add> operation targeting {(isNamespace ? "a namespace" : "an attribute")} may have at most one node and it MUST be text.");
 
             if (targetElement.Attribute(attributeName) != null)
-                throw new InvalidOperationException($"Target element already has {(isNamespace ? "namespace" : "attribute")} \"{attributeName}\"");
+                throw new InvalidPatchDirectiveException($"Target element already has {(isNamespace ? "namespace" : "attribute")} \"{attributeName}\"");
 
             var attributeValue = content.FirstOrDefault()?.ToString()?.Trim() ?? string.Empty;
             targetElement.SetAttributeValue(attributeName, attributeValue);
@@ -90,7 +90,7 @@ namespace Tizuby.XmlPatchLib.PatchOperations
             this.AddAttribute(targetElement, attributeName, true);
         }
 
-        private static Position ParsePosition(string pos, XElement context)
+        private static Position ParsePosition(string pos)
         {
             switch (pos)
             {
@@ -99,11 +99,11 @@ namespace Tizuby.XmlPatchLib.PatchOperations
                 case "after":   return Position.After;
                 case "prepend": return Position.Prepend;
                 default:
-                    throw new XmlPatcherParsingException($"Invalid <add> \"pos\" value: \"{pos}\"", context);
+                    throw new InvalidAttributeValueException("pos", pos, new[] { "before", "after", "prepend" }, true);
             }
         }
 
-        private static (Type, string) ParseType(string type, XElement context)
+        private static (Type, string) ParseType(string type)
         {
             switch (type)
             {
@@ -111,7 +111,7 @@ namespace Tizuby.XmlPatchLib.PatchOperations
                 case var _ when type.StartsWith("@"):                      return (Type.Attribute, type.Substring(1));
                 case var _ when NsRegex.Match(type) is var m && m.Success: return (Type.Namespace, m.Groups[1].Value);
                 default:
-                    throw new XmlPatcherParsingException($"Invalid <add> \"type\" value: \"{type}\"", context);
+                    throw new InvalidAttributeValueException("type", type, new[] { "@QNAME", "namespace(::NCNAME)?" });
             }
         }
     }

@@ -32,6 +32,8 @@ namespace Tizuby.XmlPatchLib.PatchOperations
 
         protected abstract void ApplyPatch(XDocument sourceDocument, IXPathEvaluator xPathEvaluator, IXmlNamespaceResolver nsResolver);
 
+        /// <summary/>
+        /// <exception cref="InvalidPatchDirectiveException"></exception>
         public static PatchOperation Parse(XElement operationNode)
         {
             var sel = ParseXPath(operationNode);
@@ -40,7 +42,8 @@ namespace Tizuby.XmlPatchLib.PatchOperations
                 case "add":     return new AddOperation(sel, operationNode);
                 case "replace": return new ReplaceOperation(sel, operationNode);
                 case "remove":  return new RemoveOperation(sel, operationNode);
-                default:        return null;
+                default:
+                    throw new InvalidPatchDirectiveException($"<{operationNode.Name.LocalName}> is not a valid patch operation.");
             }
         }
 
@@ -48,7 +51,7 @@ namespace Tizuby.XmlPatchLib.PatchOperations
         {
             var selAttribute = operationNode.Attribute("sel");
             if (selAttribute == null || string.IsNullOrWhiteSpace(selAttribute.Value))
-                throw new XmlPatcherParsingException("\"sel\" attribute is required and must have a non-empty value!", operationNode);
+                throw new InvalidAttributeValueException("'sel' attribute is required and must have a non-empty value!");
 
             return selAttribute.Value;
         }

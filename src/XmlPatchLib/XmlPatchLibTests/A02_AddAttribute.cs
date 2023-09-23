@@ -34,7 +34,7 @@ namespace XmlPatchLibTests
             var doc = Shared.GetTestSample();
             var diff = XDocument.Load(@"TestData\A02_Add\AddAttribute_Existing.xml");
 
-            Assert.ThrowsException<InvalidOperationException>(() => Shared.Patcher.PatchXml(doc, diff));
+            Assert.ThrowsException<InvalidPatchDirectiveException>(() => Shared.Patcher.PatchXml(doc, diff));
 
             var child = doc.XPathSelectElement("//main/child[1]")!;
             var attr = child.Attribute("id");

@@ -41,9 +41,9 @@ namespace XmlPatchLibTests
         public void ExistingNamespace_ShouldThrowException()
         {
             var doc = Shared.GetTestSampleWithNamespaces();
-            var diff = XDocument.Load(@"TestData\A03_Add\AddNamespaceDeclaration_Empty.xml");
+            var diff = XDocument.Load(@"TestData\A03_Add\AddNamespaceDeclaration_Existing.xml");
 
-            Assert.ThrowsException<InvalidOperationException>(() => Shared.Patcher.PatchXml(doc, diff));
+            Assert.ThrowsException<InvalidPatchDirectiveException>(() => Shared.Patcher.PatchXml(doc, diff));
 
             var nsmap = doc.Root!.GetNamespaceMap();
             Assert.AreEqual("http://schemas.microsoft.com/winfx/2006/xaml", nsmap["x"]);
