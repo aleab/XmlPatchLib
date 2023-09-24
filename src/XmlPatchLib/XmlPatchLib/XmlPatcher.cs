@@ -10,23 +10,20 @@ namespace Tizuby.XmlPatchLib
 {
     public class XmlPatcher
     {
-        protected string RootElementName { get; }
-        protected bool UseBestEffort { get; }
-        protected IXPathEvaluator XPathEvaluator { get; }
+        protected XmlPatcherOptions Options { get; }
 
         /// <summary></summary>
         /// <param name="options"></param>
         /// <exception cref="ArgumentException"></exception>
         public XmlPatcher(XmlPatcherOptions options = null)
         {
-            options = options ?? new XmlPatcherOptions();
+            this.Options = new XmlPatcherOptions(options);
 
-            this.RootElementName = options.RootElementName;
-            this.UseBestEffort = options.UseBestEffort;
-            this.XPathEvaluator = options.XPathEvaluator ?? new DefaultXPathEvaluator();
+            if (this.Options.XPathEvaluator == null)
+                this.Options.XPathEvaluator = new DefaultXPathEvaluator();
 
-            if (!Utils.XmlNCName.IsMatch(this.RootElementName))
-                throw new ArgumentException($"\"{this.RootElementName}\" is not a valid XML tag name.");
+            if (!Utils.XmlNCName.IsMatch(this.Options.RootElementName))
+                throw new ArgumentException($"\"{this.Options.RootElementName}\" is not a valid XML tag name.");
         }
 
         /// <summary>
@@ -51,8 +48,8 @@ namespace Tizuby.XmlPatchLib
                 throw new XmlException("The patch document's root is null");
 
             var root = patchDocument.Root;
-            if (root.Name.LocalName != this.RootElementName)
-                throw new InvalidDiffFormatException($"The patch document's root is \"{root.Name.LocalName}\"; expected \"{this.RootElementName}\"");
+            if (root.Name.LocalName != this.Options.RootElementName)
+                throw new InvalidDiffFormatException($"The patch document's root is \"{root.Name.LocalName}\"; expected \"{this.Options.RootElementName}\"");
 
             // TODO: Use a validator on the diff doc. Any original doc is considered valid.
 
@@ -66,11 +63,11 @@ namespace Tizuby.XmlPatchLib
                 try
                 {
                     var operation = PatchOperation.Parse(operationNode);
-                    operation.Apply(sourceDocument, this.XPathEvaluator, patchNamespaceResolver);
+                    operation.Apply(sourceDocument, this.Options, patchNamespaceResolver);
                 }
                 catch (Exception ex)
                 {
-                    if (!this.UseBestEffort)
+                    if (!this.Options.UseBestEffort)
                         throw;
                     if (ex is XmlPatcherException || ex is XPathException || ex is InvalidOperationException)
                         exceptionList.Add(ex);

@@ -2,18 +2,15 @@
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
-using Tizuby.XmlPatchLib.XPath;
 
 namespace Tizuby.XmlPatchLib.PatchOperations
 {
-    internal sealed class ReplaceOperation : PatchOperation
+    internal sealed class ReplaceOperation : BasePatchOperation<XObject>
     {
         public ReplaceOperation(string sel, XElement operationNode) : base(sel, operationNode) { }
 
-        protected override void ApplyPatch(XDocument sourceDocument, IXPathEvaluator xPathEvaluator, IXmlNamespaceResolver nsResolver)
+        protected override void ApplyPatch(XObject target, IXmlNamespaceResolver nsResolver)
         {
-            var target = xPathEvaluator.SelectSingle<XObject>(sourceDocument, this.XPathExpression, nsResolver);
-
             this.CheckNodeTypeAndContent(target);
 
             switch (target)

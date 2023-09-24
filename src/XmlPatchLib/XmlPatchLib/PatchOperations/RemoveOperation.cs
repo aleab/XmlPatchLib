@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Xml;
 using System.Xml.Linq;
-using Tizuby.XmlPatchLib.XPath;
 
 namespace Tizuby.XmlPatchLib.PatchOperations
 {
-    internal sealed class RemoveOperation : PatchOperation
+    internal sealed class RemoveOperation : BasePatchOperation<XObject>
     {
         public enum Whitespace { None, Before, After, Both }
 
@@ -16,10 +15,8 @@ namespace Tizuby.XmlPatchLib.PatchOperations
             this._whitespace = ParseWhitespace(operationNode.Attribute("ws")?.Value);
         }
 
-        protected override void ApplyPatch(XDocument sourceDocument, IXPathEvaluator xPathEvaluator, IXmlNamespaceResolver nsResolver)
+        protected override void ApplyPatch(XObject target, IXmlNamespaceResolver nsResolver)
         {
-            var target = xPathEvaluator.SelectSingle<XObject>(sourceDocument, this.XPathExpression, nsResolver);
-
             switch (target)
             {
                 case var _ when target is XAttribute attribute:

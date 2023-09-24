@@ -85,7 +85,7 @@ namespace Tizuby.XmlPatchLib.XPath
         {
             var result = container.XPathEvaluate(xpath, resolver);
             if (result is IEnumerable<object> nodes)
-                return nodes.Where(node => node is T).Cast<T>();
+                return nodes.Where(node => node is T).Cast<T>().ToList();
 
             throw new InvalidOperationException($"Unexpected evaluation result type: {result.GetType()}");
         }

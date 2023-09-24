@@ -1,4 +1,6 @@
-﻿using System.Xml.Linq;
+﻿global using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using System.Xml.Linq;
 using Tizuby.XmlPatchLib;
 
 namespace XmlPatchLibTests

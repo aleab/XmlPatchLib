@@ -3,11 +3,10 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
-using Tizuby.XmlPatchLib.XPath;
 
 namespace Tizuby.XmlPatchLib.PatchOperations
 {
-    internal sealed class AddOperation : PatchOperation
+    internal sealed class AddOperation : BasePatchOperation<XElement>
     {
         public enum Position { Append, Before, After, Prepend }
 
@@ -24,22 +23,20 @@ namespace Tizuby.XmlPatchLib.PatchOperations
             this._type = ParseType(operationNode.Attribute("type")?.Value);
         }
 
-        protected override void ApplyPatch(XDocument sourceDocument, IXPathEvaluator xPathEvaluator, IXmlNamespaceResolver nsResolver)
+        protected override void ApplyPatch(XElement target, IXmlNamespaceResolver nsResolver)
         {
-            var targetElement = xPathEvaluator.SelectSingle<XElement>(sourceDocument, this.XPathExpression, nsResolver);
-
             switch (this._type.Item1)
             {
                 case Type.None:
-                    this.AddNodes(targetElement);
+                    this.AddNodes(target);
                     break;
 
                 case Type.Attribute:
-                    this.AddAttribute(targetElement, Utils.GetXName(this._type.Item2, nsResolver));
+                    this.AddAttribute(target, Utils.GetXName(this._type.Item2, nsResolver));
                     break;
 
                 case Type.Namespace:
-                    this.AddNamespace(targetElement, this._type.Item2);
+                    this.AddNamespace(target, this._type.Item2);
                     break;
 
                 default:
