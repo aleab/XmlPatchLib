@@ -17,7 +17,7 @@ namespace Tizuby.XmlPatchLib.PatchOperations
         private readonly Position _position;
         private readonly (Type, string) _type;
 
-        public AddOperation(string sel, XElement operationNode) : base(sel, operationNode)
+        public AddOperation(string sel, XElement operationNode, IPatchOperationOptions options) : base(sel, operationNode, options)
         {
             this._position = ParsePosition(operationNode.Attribute("pos")?.Value);
             this._type = ParseType(operationNode.Attribute("type")?.Value);

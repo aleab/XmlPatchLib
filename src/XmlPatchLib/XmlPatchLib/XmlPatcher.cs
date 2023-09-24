@@ -62,8 +62,8 @@ namespace Tizuby.XmlPatchLib
             {
                 try
                 {
-                    var operation = PatchOperation.Parse(operationNode);
-                    operation.Apply(sourceDocument, this.Options, patchNamespaceResolver);
+                    var operation = PatchOperation.Parse(operationNode, this.Options);
+                    operation.Apply(sourceDocument, patchNamespaceResolver);
                 }
                 catch (Exception ex)
                 {

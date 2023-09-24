@@ -10,7 +10,7 @@ namespace Tizuby.XmlPatchLib.PatchOperations
 
         private readonly Whitespace _whitespace;
 
-        public RemoveOperation(string sel, XElement operationNode) : base(sel, operationNode)
+        public RemoveOperation(string sel, XElement operationNode, IPatchOperationOptions options) : base(sel, operationNode, options)
         {
             this._whitespace = ParseWhitespace(operationNode.Attribute("ws")?.Value);
         }

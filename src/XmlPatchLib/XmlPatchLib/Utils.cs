@@ -40,7 +40,7 @@ namespace Tizuby.XmlPatchLib
         ///     Parses an XML NCName or QName into an <see cref="XName"/>.
         /// </summary>
         /// <param name="name">A valid NCName or QName</param>
-        /// <param name="resolver">The <see cref="IXmlNamespaceResolver"/> used to map prefixes namespace URIs.</param>
+        /// <param name="resolver">The <see cref="IXmlNamespaceResolver"/> used to map prefixes to namespace URIs.</param>
         public static XName GetXName(string name, IXmlNamespaceResolver resolver)
         {
             var colon = name.IndexOf(':');

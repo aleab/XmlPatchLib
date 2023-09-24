@@ -23,10 +23,13 @@ namespace Tizuby.XmlPatchLib
         /// </summary>
         public bool AllowMultiNodeSelectors { get; set; }
 
-        // TODO: DisableReplaceRestrictions
-        //       Section 4.4 of the RFC states that
-        //          "If the located target node is an element, a comment or a processing instruction, then the child of the <replace> element MUST also be of the same type"
-        //          "the <replace> element MUST have text content or it MAY be empty when replacing [...] a text node content"
+        /// <summary>
+        ///     Whether or not to disable the following restrictions on <c>&lt;replace&gt;</c> operations.<br/><br/>
+        ///     &#x2022; A <c>&lt;replace&gt;</c> operation MUST have exactly one node; it MAY be empty when replacing a text node.
+        ///     <br/>
+        ///     &#x2022; A <c>&lt;replace&gt;</c> operation MUST replace a target node with a node of the same type.
+        /// </summary>
+        public bool DisableReplaceRestrictions { get; set; }
 
         public XmlPatcherOptions() { }
 
@@ -38,6 +41,7 @@ namespace Tizuby.XmlPatchLib
                 this.UseBestEffort = options.UseBestEffort;
                 this.XPathEvaluator = options.XPathEvaluator;
                 this.AllowMultiNodeSelectors = options.AllowMultiNodeSelectors;
+                this.DisableReplaceRestrictions = options.DisableReplaceRestrictions;
             }
         }
     }
@@ -46,5 +50,6 @@ namespace Tizuby.XmlPatchLib
     {
         IXPathEvaluator XPathEvaluator { get; }
         bool AllowMultiNodeSelectors { get; }
+        bool DisableReplaceRestrictions { get; }
     }
 }

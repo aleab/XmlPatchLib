@@ -5,6 +5,6 @@ namespace Tizuby.XmlPatchLib.PatchOperations
 {
     internal interface IPatchOperation
     {
-        void Apply(XDocument sourceDocument, IPatchOperationOptions options, IXmlNamespaceResolver nsResolver = null);
+        void Apply(XDocument sourceDocument, IXmlNamespaceResolver nsResolver = null);
     }
 }

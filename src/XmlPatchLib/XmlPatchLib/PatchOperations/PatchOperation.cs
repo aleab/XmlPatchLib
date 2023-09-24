@@ -6,14 +6,14 @@ namespace Tizuby.XmlPatchLib.PatchOperations
     {
         /// <summary/>
         /// <exception cref="InvalidPatchDirectiveException"></exception>
-        internal static IPatchOperation Parse(XElement operationNode)
+        internal static IPatchOperation Parse(XElement operationNode, IPatchOperationOptions options)
         {
             var sel = ParseXPath(operationNode);
             switch (operationNode.Name.LocalName)
             {
-                case "add":     return new AddOperation(sel, operationNode);
-                case "replace": return new ReplaceOperation(sel, operationNode);
-                case "remove":  return new RemoveOperation(sel, operationNode);
+                case "add":     return new AddOperation(sel, operationNode, options);
+                case "replace": return new ReplaceOperation(sel, operationNode, options);
+                case "remove":  return new RemoveOperation(sel, operationNode, options);
                 default:
                     throw new InvalidPatchDirectiveException($"<{operationNode.Name.LocalName}> is not a valid patch operation.");
             }
