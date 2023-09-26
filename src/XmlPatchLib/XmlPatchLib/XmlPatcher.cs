@@ -35,7 +35,7 @@ namespace Tizuby.XmlPatchLib
         /// <exception cref="ArgumentNullException">One of the documents is null.</exception>
         /// <exception cref="XmlException">The root of one of the documents is null.</exception>
         /// <exception cref="XmlPatcherException"></exception>
-        public IEnumerable<Exception> PatchXml(XDocument sourceDocument, XDocument patchDocument)
+        public IEnumerable<XmlPatcherError> PatchXml(XDocument sourceDocument, XDocument patchDocument)
         {
             if (sourceDocument == null)
                 throw new ArgumentNullException(nameof(sourceDocument));
@@ -53,9 +53,7 @@ namespace Tizuby.XmlPatchLib
 
             // TODO: Use a validator on the diff doc. Any original doc is considered valid.
 
-            var exceptionList = new List<Exception>();
-
-            var sourceNamespaceResolver = sourceDocument.GetNamespaceResolver();
+            var errors = new List<XmlPatcherError>();
             var patchNamespaceResolver = patchDocument.GetNamespaceResolver();
 
             foreach (var operationNode in root.Elements())
@@ -70,11 +68,11 @@ namespace Tizuby.XmlPatchLib
                     if (!this.Options.UseBestEffort)
                         throw;
                     if (ex is XmlPatcherException || ex is XPathException || ex is InvalidOperationException)
-                        exceptionList.Add(ex);
+                        errors.Add(new XmlPatcherError(operationNode, ex));
                 }
             }
 
-            return exceptionList;
+            return errors;
         }
     }
 }
