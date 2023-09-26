@@ -31,6 +31,11 @@ namespace Tizuby.XmlPatchLib
         /// </summary>
         public bool DisableReplaceRestrictions { get; set; }
 
+        /// <summary>
+        ///     Whether to try executing processing instructions encountered in the diff document or not.
+        /// </summary>
+        public bool UseProcessingInstrutions { get; set; }
+
         public XmlPatcherOptions() { }
 
         internal XmlPatcherOptions(XmlPatcherOptions options)
@@ -42,6 +47,7 @@ namespace Tizuby.XmlPatchLib
                 this.XPathEvaluator = options.XPathEvaluator;
                 this.AllowMultiNodeSelectors = options.AllowMultiNodeSelectors;
                 this.DisableReplaceRestrictions = options.DisableReplaceRestrictions;
+                this.UseProcessingInstrutions = options.UseProcessingInstrutions;
             }
         }
     }
@@ -51,5 +57,6 @@ namespace Tizuby.XmlPatchLib
         IXPathEvaluator XPathEvaluator { get; }
         bool AllowMultiNodeSelectors { get; }
         bool DisableReplaceRestrictions { get; }
+        bool UseProcessingInstrutions { get; }
     }
 }

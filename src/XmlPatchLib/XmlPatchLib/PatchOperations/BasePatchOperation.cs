@@ -1,5 +1,9 @@
-﻿using System.Xml;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Xml;
 using System.Xml.Linq;
+using System.Xml.XPath;
+using Tizuby.XmlPatchLib.ProcessingInstructions;
 using Tizuby.XmlPatchLib.XPath;
 
 namespace Tizuby.XmlPatchLib.PatchOperations
@@ -24,6 +28,16 @@ namespace Tizuby.XmlPatchLib.PatchOperations
 
         protected abstract void ApplyPatch(T target, IXmlNamespaceResolver nsResolver);
 
+        private void ExecuteProcessingInstructions(XDocument sourceDocument, IXmlNamespaceResolver nsResolver)
+        {
+            var nodes = ((IEnumerable<object>)this.OperationNode.XPathEvaluate("//processing-instruction()")).Cast<XProcessingInstruction>();
+            foreach (var node in nodes)
+            {
+                var pi = ProcessingInstructionsParser.Parse(node, this.Options);
+                pi?.Execute(sourceDocument, nsResolver);
+            }
+        }
+
         /// <summary>
         ///     Apply the patch operation to the specified document.
         /// </summary>
@@ -37,6 +51,9 @@ namespace Tizuby.XmlPatchLib.PatchOperations
             var xPathEvaluator = this.Options.XPathEvaluator ?? new DefaultXPathEvaluator();
             if (nsResolver == null)
                 nsResolver = this.OperationNode.Document.GetNamespaceResolver();
+
+            if (this.Options.UseProcessingInstrutions)
+                this.ExecuteProcessingInstructions(sourceDocument, nsResolver);
 
             if (!this.Options.AllowMultiNodeSelectors)
             {
