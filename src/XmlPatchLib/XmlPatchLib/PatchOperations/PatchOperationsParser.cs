@@ -2,7 +2,7 @@
 
 namespace Tizuby.XmlPatchLib.PatchOperations
 {
-    internal static class PatchOperation
+    internal static class PatchOperationsParser
     {
         /// <summary/>
         /// <exception cref="InvalidPatchDirectiveException"></exception>

@@ -60,7 +60,7 @@ namespace Tizuby.XmlPatchLib
             {
                 try
                 {
-                    var operation = PatchOperation.Parse(operationNode, this.Options);
+                    var operation = PatchOperationsParser.Parse(operationNode, this.Options);
                     operation.Apply(sourceDocument, patchNamespaceResolver);
                 }
                 catch (Exception ex)

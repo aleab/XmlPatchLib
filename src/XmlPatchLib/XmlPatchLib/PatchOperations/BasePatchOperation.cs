@@ -4,6 +4,11 @@ using Tizuby.XmlPatchLib.XPath;
 
 namespace Tizuby.XmlPatchLib.PatchOperations
 {
+    internal interface IPatchOperation
+    {
+        void Apply(XDocument sourceDocument, IXmlNamespaceResolver nsResolver = null);
+    }
+
     public abstract class BasePatchOperation<T> : IPatchOperation where T : XObject
     {
         protected readonly XElement OperationNode;
