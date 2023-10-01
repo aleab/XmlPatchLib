@@ -21,7 +21,7 @@ namespace Tizuby.XmlPatchLib.XPath
         /// <param name="container">The <see cref="XContainer"/> on which to evaluate the XPath expression.</param>
         /// <param name="xpath">The XPath expression.</param>
         /// <param name="resolver">An <see cref="IXmlNamespaceResolver"/> for the namespace prefixes in the XPath expression.</param>
-        /// <returns>A <see cref="T"/>-typed <see cref="XObject"/>.</returns>
+        /// <returns>A T-typed <see cref="XObject"/>.</returns>
         /// <exception cref="UnlocatedNodeException">The XPath expression could not uniquely locate the requested node.</exception>
         /// <exception cref="XPathException">The XPath expression was not well-formed.</exception>
         /// <exception cref="InvalidOperationException">The XPath expression selected an invalid or illegal node.</exception>
@@ -50,7 +50,7 @@ namespace Tizuby.XmlPatchLib.XPath
         /// <param name="container">The <see cref="XContainer"/> on which to evaluate the XPath expression.</param>
         /// <param name="xpath">The XPath expression.</param>
         /// <param name="resolver">An <see cref="IXmlNamespaceResolver"/> for the namespace prefixes in the XPath expression.</param>
-        /// <returns>A <see cref="T"/>-typed <see cref="XObject"/>.</returns>
+        /// <returns>A T-typed <see cref="XObject"/>.</returns>
         /// <exception cref="UnlocatedNodeException">The XPath expression selected multiple nodes.</exception>
         /// <exception cref="XPathException">The XPath expression was not well-formed.</exception>
         /// <exception cref="InvalidOperationException">The XPath expression selected an invalid or illegal node.</exception>
@@ -78,7 +78,7 @@ namespace Tizuby.XmlPatchLib.XPath
         /// <param name="container">The <see cref="XContainer"/> on which to evaluate the XPath expression.</param>
         /// <param name="xpath">The XPath expression.</param>
         /// <param name="resolver">An <see cref="IXmlNamespaceResolver"/> for the namespace prefixes in the XPath expression.</param>
-        /// <returns>All <see cref="T"/>-typed <see cref="XObject"/>s.</returns>
+        /// <returns>All T-typed <see cref="XObject"/>s.</returns>
         /// <exception cref="XPathException">The XPath expression was not well-formed.</exception>
         /// <exception cref="InvalidOperationException">The XPath expression selected an invalid or illegal node.</exception>
         public IEnumerable<T> SelectAll<T>(XContainer container, string xpath, IXmlNamespaceResolver resolver = null) where T : XObject

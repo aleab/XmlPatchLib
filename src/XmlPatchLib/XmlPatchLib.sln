@@ -8,6 +8,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{83FFF269-1C47-4EFB-8E57-72DDDEEBD194}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		..\..\README.md = ..\..\README.md
 		rfc5261.xsd = rfc5261.xsd
 	EndProjectSection
 EndProject

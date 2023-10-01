@@ -3,21 +3,46 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Tizuby.XmlPatchLib</RootNamespace>
-    <AssemblyName>Tizuby.XmlPatchLib</AssemblyName>
-    <VersionPrefix>1.0.0</VersionPrefix>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+
+  <!-- Assembly Info -->
+  <PropertyGroup>
+    <AssemblyTitle>$(RootNamespace) (aleab fork)</AssemblyTitle>
+    <AssemblyName>Aleab.XmlPatchLib</AssemblyName>
+    <AssemblyVersion>$(Version)</AssemblyVersion>
+    <FileVersion>$(Version)</FileVersion>
+    <Product>$(AssemblyName)</Product>
+  </PropertyGroup>
+
+  <!-- Package Info -->
+  <PropertyGroup>
+    <PackageId>$(AssemblyName)</PackageId>
+    <PackageVersion>$(Version)</PackageVersion>
     <Authors>aleab</Authors>
+    <Description>A .NET implementation of RFC 5261.</Description>
     <PackageProjectUrl>https://github.com/aleab/XmlPatchLib</PackageProjectUrl>
     <RepositoryUrl>https://github.com/aleab/XmlPatchLib.git</RepositoryUrl>
-    <AssemblyVersion>$(VersionPrefix)</AssemblyVersion>
-    <FileVersion>$(VersionPrefix)</FileVersion>
-    <Product>$(AssemblyName)@aleab</Product>
+    <PackageTags>xml xmlpatch rfc5261</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <IncludeSymbols>True</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
       <_Parameter1>XmlPatchLibTests</_Parameter1>
     </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Configuration)' == 'Release'">
+    <None Include="..\..\..\README.md" Pack="True" PackagePath="\" />
   </ItemGroup>
 
 </Project>

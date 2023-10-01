@@ -9,6 +9,7 @@ end_of_line = crlf
 
 dotnet_analyzer_diagnostic.severity = none
 dotnet_code_quality_unused_parameters = all:suggestion
+dotnet_diagnostic.CS1591.severity = none
 dotnet_remove_unnecessary_suppression_exclusions = category: ReSharper
 
 csharp_indent_labels = one_less_than_current
