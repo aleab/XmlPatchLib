@@ -55,18 +55,26 @@ namespace Tizuby.XmlPatchLib.PatchOperations
             if (this.Options.UseProcessingInstrutions)
                 this.ExecuteProcessingInstructions(sourceDocument, nsResolver);
 
-            if (!this.Options.AllowMultiNodeSelectors)
+            try
             {
-                var target = xPathEvaluator.SelectSingle<T>(sourceDocument, this.XPathExpression, nsResolver);
-                this.ApplyPatch(target, nsResolver);
-            }
-            else
-            {
-                var targets = xPathEvaluator.SelectAll<T>(sourceDocument, this.XPathExpression, nsResolver);
-                foreach (var target in targets)
+                if (!this.Options.AllowMultiNodeSelectors)
                 {
+                    var target = xPathEvaluator.SelectSingle<T>(sourceDocument, this.XPathExpression, nsResolver);
                     this.ApplyPatch(target, nsResolver);
                 }
+                else
+                {
+                    var targets = xPathEvaluator.SelectAll<T>(sourceDocument, this.XPathExpression, nsResolver);
+                    foreach (var target in targets)
+                    {
+                        this.ApplyPatch(target, nsResolver);
+                    }
+                }
+            }
+            catch (UnlocatedNodeException ex)
+            {
+                ex.Source = $"<{this.OperationNode.Name} {string.Join(" ", this.OperationNode.Attributes().Select(x => x.ToString()))}>";
+                throw;
             }
         }
     }
