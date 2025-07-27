@@ -54,14 +54,16 @@ namespace Tizuby.XmlPatchLib
             // TODO: Use a validator on the diff doc. Any original doc is considered valid.
 
             var errors = new List<XmlPatcherError>();
-            var patchNamespaceResolver = patchDocument.GetNamespaceResolver();
+
+            var patchNamespaceManager = this.Options.XsltContext ?? new XmlNamespaceManager(new NameTable());
+            patchNamespaceManager.CopyNamespacesFrom(patchDocument);
 
             foreach (var operationNode in root.Elements())
             {
                 try
                 {
                     var operation = PatchOperationsParser.Parse(operationNode, this.Options);
-                    operation.Apply(sourceDocument, patchNamespaceResolver);
+                    operation.Apply(sourceDocument, patchNamespaceManager);
                 }
                 catch (Exception ex)
                 {

@@ -40,7 +40,7 @@ public class A07_ReplaceAttribute
         var doc = Shared.GetTestSampleWithNamespaces();
         var diff = XDocument.Load(@"TestData\A07_Replace\ReplaceAttribute_Prefixed.xml");
 
-        var child = doc.XPathSelectElement("//_:child[@x:id='1']", diff.GetNamespaceResolver())!;
+        var child = doc.XPathSelectElement("//_:child[@x:id='1']", diff.GetNamespaceManager())!;
 
         Shared.Patcher.PatchXml(doc, diff);
 

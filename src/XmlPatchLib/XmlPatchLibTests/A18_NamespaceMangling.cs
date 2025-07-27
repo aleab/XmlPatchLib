@@ -19,7 +19,7 @@ public class A18_NamespaceMangling
         var doc = Shared.GetTestSampleWithNamespaces();
         var diff = XDocument.Load(@"TestData\A18_NamespaceMangling\NamespaceMangling.xml");
 
-        var nsResolver = doc.GetNamespaceResolver("default");
+        var nsResolver = doc.GetNamespaceManager("default");
 
         Shared.Patcher.PatchXml(doc, diff);
 
@@ -48,7 +48,7 @@ public class A18_NamespaceMangling
         var doc = Shared.GetTestSampleWithNamespaces();
         var diff = XDocument.Load(@"TestData\A18_NamespaceMangling\NamespaceMangling_NamespaceNotDeclaredInTarget.xml");
 
-        var nsResolver = doc.GetNamespaceResolver("default");
+        var nsResolver = doc.GetNamespaceManager("default");
 
         Shared.Patcher.PatchXml(doc, diff);
 

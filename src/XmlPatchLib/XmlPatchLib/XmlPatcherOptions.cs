@@ -1,4 +1,5 @@
-﻿using Tizuby.XmlPatchLib.XPath;
+﻿using System.Xml.Xsl;
+using Tizuby.XmlPatchLib.XPath;
 
 namespace Tizuby.XmlPatchLib
 {
@@ -9,6 +10,8 @@ namespace Tizuby.XmlPatchLib
     public class XmlPatcherOptions : IPatchOperationOptions
     {
         public IXPathEvaluator XPathEvaluator { get; set; }
+
+        public XsltContext XsltContext { get; set; }
 
         /// <summary>
         ///     The xs:NCName of the patch document's root element.
@@ -46,6 +49,7 @@ namespace Tizuby.XmlPatchLib
             if (options != null)
             {
                 this.XPathEvaluator  = options.XPathEvaluator;
+                this.XsltContext     = options.XsltContext;
                 this.RootElementName = options.RootElementName;
                 this.UseBestEffort   = options.UseBestEffort;
 

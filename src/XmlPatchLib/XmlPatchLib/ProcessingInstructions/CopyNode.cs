@@ -26,7 +26,7 @@ namespace Tizuby.XmlPatchLib.ProcessingInstructions
         public void Execute(XDocument sourceDocument, IXmlNamespaceResolver nsResolver = null)
         {
             if (nsResolver == null)
-                nsResolver = this._destination.Document.GetNamespaceResolver();
+                nsResolver = this._destination.Document.GetNamespaceManager();
 
             var target = this._xPathEvaluator.SelectSingle<XNode>(sourceDocument, this._xPathExpression, nsResolver);
             this._destination.ReplaceWith(target);

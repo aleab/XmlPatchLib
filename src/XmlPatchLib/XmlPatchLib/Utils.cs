@@ -17,23 +17,27 @@ namespace Tizuby.XmlPatchLib
                .ToDictionary(x => x.Name.LocalName == "xmlns" ? string.Empty : x.Name.LocalName, x => x.Value);
         }
 
-        public static IXmlNamespaceResolver GetNamespaceResolver(this XDocument doc, string defaultNamespace = null)
+        public static IXmlNamespaceResolver GetNamespaceManager(this XDocument doc, string defaultNamespace = null)
+        {
+            var resolver = new XmlNamespaceManager(new NameTable());
+            resolver.CopyNamespacesFrom(doc, defaultNamespace);
+            return resolver;
+        }
+
+        public static void CopyNamespacesFrom(this XmlNamespaceManager xmlNamespaceManager, XDocument doc, string defaultNamespace = null)
         {
             if (doc?.Root == null)
-                return null;
+                return;
 
-            var resolver = new XmlNamespaceManager(new NameTable());
             foreach (var attr in doc.Root.Attributes().Where(attr => attr.IsNamespaceDeclaration))
             {
                 var prefix = attr.Name.LocalName == "xmlns" ? string.Empty : attr.Name.LocalName;
 
                 if (!string.IsNullOrWhiteSpace(prefix))
-                    resolver.AddNamespace(prefix, attr.Value);
+                    xmlNamespaceManager.AddNamespace(prefix, attr.Value);
                 else if (defaultNamespace != null)
-                    resolver.AddNamespace(defaultNamespace.Trim(), attr.Value);
+                    xmlNamespaceManager.AddNamespace(defaultNamespace.Trim(), attr.Value);
             }
-
-            return resolver;
         }
 
         /// <summary>

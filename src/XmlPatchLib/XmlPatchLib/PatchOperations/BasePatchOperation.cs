@@ -50,7 +50,7 @@ namespace Tizuby.XmlPatchLib.PatchOperations
         {
             var xPathEvaluator = this.options.XPathEvaluator ?? new DefaultXPathEvaluator();
             if (nsResolver == null)
-                nsResolver = this.operationNode.Document.GetNamespaceResolver();
+                nsResolver = this.operationNode.Document.GetNamespaceManager();
 
             if (this.options.UseProcessingInstrutions)
                 this.ExecuteProcessingInstructions(sourceDocument, nsResolver);
