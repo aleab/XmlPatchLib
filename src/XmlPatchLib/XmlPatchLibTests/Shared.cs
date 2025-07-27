@@ -1,27 +1,25 @@
 ﻿global using Microsoft.VisualStudio.TestTools.UnitTesting;
-
 using System.Xml.Linq;
 using Tizuby.XmlPatchLib;
 
-namespace XmlPatchLibTests
+namespace XmlPatchLibTests;
+
+internal static class Shared
 {
-    internal static class Shared
+    public static XmlPatcher Patcher { get; } = new();
+
+    public static XDocument GetTestSample(LoadOptions loadOptions = LoadOptions.None)
     {
-        public static XmlPatcher Patcher { get; } = new XmlPatcher();
+        return XDocument.Load(@"TestData\test-sample.xml", loadOptions);
+    }
 
-        public static XDocument GetTestSample(LoadOptions loadOptions = LoadOptions.None)
-        {
-            return XDocument.Load(@"TestData\test-sample.xml", loadOptions);
-        }
+    public static XDocument GetTestSampleWithNamespaces(LoadOptions loadOptions = LoadOptions.None)
+    {
+        return XDocument.Load(@"TestData\test-sample-with-namespaces.xml", loadOptions);
+    }
 
-        public static XDocument GetTestSampleWithNamespaces(LoadOptions loadOptions = LoadOptions.None)
-        {
-            return XDocument.Load(@"TestData\test-sample-with-namespaces.xml", loadOptions);
-        }
-
-        public static void TestWith<T>(T o, Action<T> tests)
-        {
-            tests.Invoke(o);
-        }
+    public static void TestWith<T>(T o, Action<T> tests)
+    {
+        tests.Invoke(o);
     }
 }

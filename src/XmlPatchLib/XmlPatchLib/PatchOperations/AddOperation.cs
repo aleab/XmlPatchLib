@@ -12,7 +12,7 @@ namespace Tizuby.XmlPatchLib.PatchOperations
 
         public enum Type { None, Attribute, Namespace }
 
-        private static readonly Regex NsRegex = new Regex($"^namespace(?:::({Utils.XmlNCName}))?$");
+        private static readonly Regex nsRegex = new Regex($"^namespace(?:::({Utils.XmlNCName}))?$");
 
         private readonly Position _position;
         private readonly (Type, string) _type;
@@ -20,7 +20,7 @@ namespace Tizuby.XmlPatchLib.PatchOperations
         public AddOperation(string sel, XElement operationNode, IPatchOperationOptions options) : base(sel, operationNode, options)
         {
             this._position = ParsePosition(operationNode.Attribute("pos")?.Value);
-            this._type = ParseType(operationNode.Attribute("type")?.Value);
+            this._type     = ParseType(operationNode.Attribute("type")?.Value);
         }
 
         protected override void ApplyPatch(XElement target, IXmlNamespaceResolver nsResolver)
@@ -46,7 +46,7 @@ namespace Tizuby.XmlPatchLib.PatchOperations
 
         private void AddNodes(XContainer target)
         {
-            var nodes = this.OperationNode.Nodes();
+            var nodes = this.operationNode.Nodes();
             switch (this._position)
             {
                 case Position.Append:
@@ -68,7 +68,7 @@ namespace Tizuby.XmlPatchLib.PatchOperations
 
         private void AddAttribute(XElement targetElement, XName attributeName, bool isNamespace = false)
         {
-            var content = this.OperationNode.Nodes().ToList();
+            var content = this.operationNode.Nodes().ToList();
 
             var isValidTextContent = content.Count == 0 || (content.Count == 1 && content[0].NodeType == XmlNodeType.Text);
             if (!isValidTextContent)
@@ -106,7 +106,7 @@ namespace Tizuby.XmlPatchLib.PatchOperations
             {
                 case null:                                                 return (Type.None, null);
                 case var _ when type.StartsWith("@"):                      return (Type.Attribute, type.Substring(1));
-                case var _ when NsRegex.Match(type) is var m && m.Success: return (Type.Namespace, m.Groups[1].Value);
+                case var _ when nsRegex.Match(type) is var m && m.Success: return (Type.Namespace, m.Groups[1].Value);
                 default:
                     throw new InvalidAttributeValueException("type", type, new[] { "@QNAME", "namespace(::NCNAME)?" });
             }

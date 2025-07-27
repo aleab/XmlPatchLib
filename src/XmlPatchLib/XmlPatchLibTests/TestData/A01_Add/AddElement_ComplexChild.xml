@@ -1,18 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <diff xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../rfc5261.xsd">
-    <add sel="//main">
-        <complex-child id="3">
-            <!-- 1st child node -->
-            <child id="with-text">
-                2nd child inner text
-            </child>
-            <child id="with-nested-nodes">
-                Text Node
-                <child id="nested-with-text">Inner Text</child>
-                <!-- Comment Node -->
-            </child>
-            Text Node
-            <child id="empty" />
-        </complex-child>
-    </add>
+  <add sel="//main">
+    <complex-child id="3">
+      <!-- 1st child node -->
+      <child id="with-text">
+        2nd child inner text
+      </child>
+      <child id="with-nested-nodes">
+        Text Node
+        <child id="nested-with-text">Inner Text</child>
+        <!-- Comment Node -->
+      </child>
+      Text Node
+      <child id="empty" />
+    </complex-child>
+  </add>
 </diff>

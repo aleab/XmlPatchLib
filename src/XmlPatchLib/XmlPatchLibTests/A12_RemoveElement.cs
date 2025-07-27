@@ -5,97 +5,96 @@ using Tizuby.XmlPatchLib;
 
 // ReSharper disable InconsistentNaming
 
-namespace XmlPatchLibTests
+namespace XmlPatchLibTests;
+
+/// <summary>
+///     https://datatracker.ietf.org/doc/html/rfc5261#appendix-A.12
+/// </summary>
+[TestClass]
+[TestCategory("<remove>")]
+public class A12_RemoveElement
 {
-    /// <summary>
-    ///     https://datatracker.ietf.org/doc/html/rfc5261#appendix-A.12
-    /// </summary>
-    [TestClass]
-    [TestCategory("<remove>")]
-    public class A12_RemoveElement
+    [TestMethod]
+    public void ExistingElement()
     {
-        [TestMethod]
-        public void ExistingElement()
-        {
-            var doc = Shared.GetTestSample();
-            var diff = XDocument.Load(@"TestData\A12_Remove\RemoveElement.xml");
+        var doc = Shared.GetTestSample();
+        var diff = XDocument.Load(@"TestData\A12_Remove\RemoveElement.xml");
 
-            Shared.Patcher.PatchXml(doc, diff);
+        Shared.Patcher.PatchXml(doc, diff);
 
-            Assert.IsFalse(((IEnumerable)doc.XPathEvaluate("//main/child[@id='1']")).GetEnumerator().MoveNext(), "element was not removed");
-        }
+        Assert.IsFalse(((IEnumerable)doc.XPathEvaluate("//main/child[@id='1']")).GetEnumerator().MoveNext(), "element was not removed");
+    }
 
-        [TestMethod]
-        public void MissingElement_ShouldThrowException()
-        {
-            var doc = Shared.GetTestSample();
-            var diff = XDocument.Load(@"TestData\A12_Remove\RemoveElement_Missing.xml");
+    [TestMethod]
+    public void MissingElement_ShouldThrowException()
+    {
+        var doc = Shared.GetTestSample();
+        var diff = XDocument.Load(@"TestData\A12_Remove\RemoveElement_Missing.xml");
 
-            Assert.ThrowsException<UnlocatedNodeException>(() => Shared.Patcher.PatchXml(doc, diff));
-        }
+        Assert.ThrowsException<UnlocatedNodeException>(() => Shared.Patcher.PatchXml(doc, diff));
+    }
 
-        [TestMethod]
-        public void WhiteSpace_Before()
-        {
-            var doc = Shared.GetTestSample(LoadOptions.PreserveWhitespace);
-            var diff = XDocument.Load(@"TestData\A12_Remove\RemoveElement_WhiteSpaceBefore.xml");
+    [TestMethod]
+    public void WhiteSpace_Before()
+    {
+        var doc = Shared.GetTestSample(LoadOptions.PreserveWhitespace);
+        var diff = XDocument.Load(@"TestData\A12_Remove\RemoveElement_WhiteSpaceBefore.xml");
 
-            var wsBefore = doc.XPathSelectElement("//main/child[@id='1']")!.PreviousNode!;
-            var nodeCount = doc.XPathSelectElement("//main")!.Nodes().Count();
+        var wsBefore = doc.XPathSelectElement("//main/child[@id='1']")!.PreviousNode!;
+        var nodeCount = doc.XPathSelectElement("//main")!.Nodes().Count();
 
-            Shared.Patcher.PatchXml(doc, diff);
+        Shared.Patcher.PatchXml(doc, diff);
 
-            Assert.IsNull(wsBefore.Document, "previous whitespace node was not removed");
-            Assert.AreEqual(nodeCount - 2, doc.XPathSelectElement("//main")!.Nodes().Count());
-        }
+        Assert.IsNull(wsBefore.Document, "previous whitespace node was not removed");
+        Assert.AreEqual(nodeCount - 2, doc.XPathSelectElement("//main")!.Nodes().Count());
+    }
 
-        [TestMethod]
-        public void WhiteSpace_After()
-        {
-            var doc = Shared.GetTestSample(LoadOptions.PreserveWhitespace);
-            var diff = XDocument.Load(@"TestData\A12_Remove\RemoveElement_WhiteSpaceAfter.xml");
+    [TestMethod]
+    public void WhiteSpace_After()
+    {
+        var doc = Shared.GetTestSample(LoadOptions.PreserveWhitespace);
+        var diff = XDocument.Load(@"TestData\A12_Remove\RemoveElement_WhiteSpaceAfter.xml");
 
-            var wsAfter = doc.XPathSelectElement("//main/child[@id='1']")!.NextNode!;
-            var nodeCount = doc.XPathSelectElement("//main")!.Nodes().Count();
+        var wsAfter = doc.XPathSelectElement("//main/child[@id='1']")!.NextNode!;
+        var nodeCount = doc.XPathSelectElement("//main")!.Nodes().Count();
 
-            Shared.Patcher.PatchXml(doc, diff);
+        Shared.Patcher.PatchXml(doc, diff);
 
-            Assert.IsNull(wsAfter.Document, "following whitespace node was not removed");
-            Assert.AreEqual(nodeCount - 2, doc.XPathSelectElement("//main")!.Nodes().Count());
-        }
+        Assert.IsNull(wsAfter.Document, "following whitespace node was not removed");
+        Assert.AreEqual(nodeCount - 2, doc.XPathSelectElement("//main")!.Nodes().Count());
+    }
 
-        [TestMethod]
-        public void WhiteSpace_Both()
-        {
-            var doc = Shared.GetTestSample(LoadOptions.PreserveWhitespace);
-            var diff = XDocument.Load(@"TestData\A12_Remove\RemoveElement_WhiteSpaceBoth.xml");
+    [TestMethod]
+    public void WhiteSpace_Both()
+    {
+        var doc = Shared.GetTestSample(LoadOptions.PreserveWhitespace);
+        var diff = XDocument.Load(@"TestData\A12_Remove\RemoveElement_WhiteSpaceBoth.xml");
 
-            var child = doc.XPathSelectElement("//main/child[@id='1']")!;
-            var wsBefore = child.PreviousNode!;
-            var wsAfter = child.NextNode!;
-            var nodeCount = doc.XPathSelectElement("//main")!.Nodes().Count();
+        var child = doc.XPathSelectElement("//main/child[@id='1']")!;
+        var wsBefore = child.PreviousNode!;
+        var wsAfter = child.NextNode!;
+        var nodeCount = doc.XPathSelectElement("//main")!.Nodes().Count();
 
-            Shared.Patcher.PatchXml(doc, diff);
+        Shared.Patcher.PatchXml(doc, diff);
 
-            Assert.IsNull(wsBefore.Document, "previous whitespace node was not removed");
-            Assert.IsNull(wsAfter.Document, "following whitespace node was not removed");
-            Assert.AreEqual(nodeCount - 3, doc.XPathSelectElement("//main")!.Nodes().Count());
-        }
+        Assert.IsNull(wsBefore.Document, "previous whitespace node was not removed");
+        Assert.IsNull(wsAfter.Document, "following whitespace node was not removed");
+        Assert.AreEqual(nodeCount - 3, doc.XPathSelectElement("//main")!.Nodes().Count());
+    }
 
-        [TestMethod]
-        public void WhiteSpace_None_ShouldCombinePrevAndNextWhitespaces()
-        {
-            var doc = Shared.GetTestSample(LoadOptions.PreserveWhitespace);
-            var diff = XDocument.Load(@"TestData\A12_Remove\RemoveElement.xml");
+    [TestMethod]
+    public void WhiteSpace_None_ShouldCombinePrevAndNextWhitespaces()
+    {
+        var doc = Shared.GetTestSample(LoadOptions.PreserveWhitespace);
+        var diff = XDocument.Load(@"TestData\A12_Remove\RemoveElement.xml");
 
-            var child = doc.XPathSelectElement("//main/child[@id='1']")!;
-            var wsBefore = child.PreviousNode!;
-            var wsAfter = child.NextNode!;
+        var child = doc.XPathSelectElement("//main/child[@id='1']")!;
+        var wsBefore = child.PreviousNode!;
+        var wsAfter = child.NextNode!;
 
-            Shared.Patcher.PatchXml(doc, diff);
+        Shared.Patcher.PatchXml(doc, diff);
 
-            Assert.IsNotNull(wsBefore.Document, "previous whitespace node was removed");
-            Assert.IsNull(wsAfter.Document, "following whitespace node was not removed");
-        }
+        Assert.IsNotNull(wsBefore.Document, "previous whitespace node was removed");
+        Assert.IsNull(wsAfter.Document, "following whitespace node was not removed");
     }
 }

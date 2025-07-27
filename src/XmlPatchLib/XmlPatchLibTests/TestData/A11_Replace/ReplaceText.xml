@@ -1,4 +1,4 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <diff xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../rfc5261.xsd">
-    <replace sel="//main/child[@id='1']/text()[1]">New Text</replace>
+  <replace sel="//main/child[@id='1']/text()[1]">New Text</replace>
 </diff>

@@ -16,11 +16,11 @@ namespace Tizuby.XmlPatchLib.PatchOperations
             switch (target)
             {
                 case var _ when target is XAttribute attribute:
-                    attribute.SetValue(this.OperationNode.Value);
+                    attribute.SetValue(this.operationNode.Value);
                     break;
 
                 case var _ when target is XNode node:
-                    node.ReplaceWith(this.OperationNode.Nodes());
+                    node.ReplaceWith(this.operationNode.Nodes());
                     break;
 
                 default:
@@ -30,7 +30,7 @@ namespace Tizuby.XmlPatchLib.PatchOperations
 
         private void CheckNodeTypeAndContent(XObject target)
         {
-            var content = this.OperationNode.Nodes().ToList();
+            var content = this.operationNode.Nodes().ToList();
 
             if (target.NodeType == XmlNodeType.Attribute)
             {
@@ -39,7 +39,7 @@ namespace Tizuby.XmlPatchLib.PatchOperations
                 return;
             }
 
-            if (!this.Options.DisableReplaceRestrictions)
+            if (!this.options.DisableReplaceRestrictions)
             {
                 switch (target.NodeType)
                 {

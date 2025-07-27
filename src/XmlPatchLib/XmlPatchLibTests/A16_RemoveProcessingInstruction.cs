@@ -5,33 +5,32 @@ using Tizuby.XmlPatchLib;
 
 // ReSharper disable InconsistentNaming
 
-namespace XmlPatchLibTests
+namespace XmlPatchLibTests;
+
+/// <summary>
+///     https://datatracker.ietf.org/doc/html/rfc5261#appendix-A.16
+/// </summary>
+[TestClass]
+[TestCategory("<remove>")]
+public class A16_RemoveProcessingInstruction
 {
-    /// <summary>
-    ///     https://datatracker.ietf.org/doc/html/rfc5261#appendix-A.16
-    /// </summary>
-    [TestClass]
-    [TestCategory("<remove>")]
-    public class A16_RemoveProcessingInstruction
+    [TestMethod]
+    public void ExistingProcessingInstruction()
     {
-        [TestMethod]
-        public void ExistingProcessingInstruction()
-        {
-            var doc = Shared.GetTestSample();
-            var diff = XDocument.Load(@"TestData\A16_Remove\RemoveProcessingInstruction.xml");
+        var doc = Shared.GetTestSample();
+        var diff = XDocument.Load(@"TestData\A16_Remove\RemoveProcessingInstruction.xml");
 
-            Shared.Patcher.PatchXml(doc, diff);
+        Shared.Patcher.PatchXml(doc, diff);
 
-            Assert.IsFalse(((IEnumerable)doc.XPathEvaluate("/original/processing-instruction('test')")).GetEnumerator().MoveNext(), "processing-instruction was not removed");
-        }
+        Assert.IsFalse(((IEnumerable)doc.XPathEvaluate("/original/processing-instruction('test')")).GetEnumerator().MoveNext(), "processing-instruction was not removed");
+    }
 
-        [TestMethod]
-        public void MissingProcessingInstruction_ShouldThrowException()
-        {
-            var doc = Shared.GetTestSample();
-            var diff = XDocument.Load(@"TestData\A16_Remove\RemoveProcessingInstruction_Missing.xml");
+    [TestMethod]
+    public void MissingProcessingInstruction_ShouldThrowException()
+    {
+        var doc = Shared.GetTestSample();
+        var diff = XDocument.Load(@"TestData\A16_Remove\RemoveProcessingInstruction_Missing.xml");
 
-            Assert.ThrowsException<UnlocatedNodeException>(() => Shared.Patcher.PatchXml(doc, diff));
-        }
+        Assert.ThrowsException<UnlocatedNodeException>(() => Shared.Patcher.PatchXml(doc, diff));
     }
 }

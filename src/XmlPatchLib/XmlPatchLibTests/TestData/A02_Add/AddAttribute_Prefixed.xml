@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <diff xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../rfc5261.xsd"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <add sel="//x:main" type="@x:attr">new-attr</add>
+  <add sel="//x:main" type="@x:attr">new-attr</add>
 </diff>

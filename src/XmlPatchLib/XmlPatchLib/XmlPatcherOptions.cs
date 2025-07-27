@@ -45,13 +45,13 @@ namespace Tizuby.XmlPatchLib
         {
             if (options != null)
             {
-                this.XPathEvaluator = options.XPathEvaluator;
+                this.XPathEvaluator  = options.XPathEvaluator;
                 this.RootElementName = options.RootElementName;
-                this.UseBestEffort = options.UseBestEffort;
+                this.UseBestEffort   = options.UseBestEffort;
 
-                this.AllowMultiNodeSelectors = options.AllowMultiNodeSelectors;
+                this.AllowMultiNodeSelectors    = options.AllowMultiNodeSelectors;
                 this.DisableReplaceRestrictions = options.DisableReplaceRestrictions;
-                this.UseProcessingInstrutions = options.UseProcessingInstrutions;
+                this.UseProcessingInstrutions   = options.UseProcessingInstrutions;
             }
         }
     }

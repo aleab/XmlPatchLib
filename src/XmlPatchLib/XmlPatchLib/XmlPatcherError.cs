@@ -11,7 +11,7 @@ namespace Tizuby.XmlPatchLib
         public XmlPatcherError(XElement operationNode, Exception ex)
         {
             this._operationNode = operationNode;
-            this.Exception = ex;
+            this.Exception      = ex;
         }
 
         public override string ToString()

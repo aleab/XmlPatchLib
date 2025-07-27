@@ -6,7 +6,7 @@ namespace Tizuby.XmlPatchLib.ProcessingInstructions
 {
     internal static class ProcessingInstructionsParser
     {
-        private static readonly Regex ArgsRegex = new Regex("([_A-Za-z][-._A-Za-z0-9]*)=\"(.*?)\"");
+        private static readonly Regex argsRegex = new Regex("([_A-Za-z][-._A-Za-z0-9]*)=\"(.*?)\"");
 
         /// <summary/>
         /// <exception cref="InvalidProcessingInstructionException"></exception>
@@ -18,7 +18,7 @@ namespace Tizuby.XmlPatchLib.ProcessingInstructions
                 return null;
             }
 
-            var args = ArgsRegex.Matches(node.Data).Cast<Match>().ToDictionary(m => m.Groups[1].Value, m => m.Groups[2].Value);
+            var args = argsRegex.Matches(node.Data).Cast<Match>().ToDictionary(m => m.Groups[1].Value, m => m.Groups[2].Value);
             switch (node.Target)
             {
                 case CopyNode.Name:

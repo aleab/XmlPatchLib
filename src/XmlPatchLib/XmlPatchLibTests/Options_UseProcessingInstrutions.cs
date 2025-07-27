@@ -4,24 +4,23 @@ using Tizuby.XmlPatchLib;
 
 // ReSharper disable InconsistentNaming
 
-namespace XmlPatchLibTests
+namespace XmlPatchLibTests;
+
+[TestClass]
+[TestCategory("Options")]
+public class Options_UseProcessingInstrutions
 {
-    [TestClass]
-    [TestCategory("Options")]
-    public class Options_UseProcessingInstrutions
+    private static readonly XmlPatcher Patcher = new(new XmlPatcherOptions { UseProcessingInstrutions = true });
+
+    [TestMethod]
+    public void CopyNode()
     {
-        private static readonly XmlPatcher Patcher = new XmlPatcher(new XmlPatcherOptions { UseProcessingInstrutions = true });
+        var doc = Shared.GetTestSample();
+        var diff = XDocument.Load(@"TestData\Options\UseProcessingInstructions_CopyNode.xml");
 
-        [TestMethod]
-        public void CopyNode()
-        {
-            var doc = Shared.GetTestSample();
-            var diff = XDocument.Load(@"TestData\Options\UseProcessingInstructions_CopyNode.xml");
+        Patcher.PatchXml(doc, diff);
 
-            Patcher.PatchXml(doc, diff);
-
-            var main = doc.XPathSelectElement("//main")!;
-            Assert.AreSame(doc.XPathSelectElement("//wrapper"), main.Parent);
-        }
+        var main = doc.XPathSelectElement("//main")!;
+        Assert.AreSame(doc.XPathSelectElement("//wrapper"), main.Parent);
     }
 }

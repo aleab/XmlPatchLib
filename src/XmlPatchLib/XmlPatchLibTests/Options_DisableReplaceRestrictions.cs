@@ -5,76 +5,75 @@ using Tizuby.XmlPatchLib;
 
 // ReSharper disable InconsistentNaming
 
-namespace XmlPatchLibTests
+namespace XmlPatchLibTests;
+
+[TestClass]
+[TestCategory("Options")]
+public class Options_DisableReplaceRestrictions
 {
-    [TestClass]
-    [TestCategory("Options")]
-    public class Options_DisableReplaceRestrictions
+    private static readonly XmlPatcher Patcher = new(new XmlPatcherOptions { DisableReplaceRestrictions = true });
+
+    [TestMethod]
+    public void Element()
     {
-        private static readonly XmlPatcher Patcher = new XmlPatcher(new XmlPatcherOptions { DisableReplaceRestrictions = true });
+        var doc = Shared.GetTestSample();
+        var diff = XDocument.Load(@"TestData\A06_Replace\ReplaceElement_WithDifferentNodeType.xml");
 
-        [TestMethod]
-        public void Element()
+        var main = doc.XPathSelectElement("//main")!;
+        var child = doc.XPathSelectElement("//main/child[@id='1']")!;
+
+        Patcher.PatchXml(doc, diff);
+
+        Assert.IsNull(child.Document);
+        Shared.TestWith(main.Nodes().ToList()[1], node =>
         {
-            var doc = Shared.GetTestSample();
-            var diff = XDocument.Load(@"TestData\A06_Replace\ReplaceElement_WithDifferentNodeType.xml");
+            Assert.AreEqual(XmlNodeType.Comment, node.NodeType);
+            Assert.AreEqual(((XComment)node).Value, " Not an Element ");
+        });
+    }
 
-            var main = doc.XPathSelectElement("//main")!;
-            var child = doc.XPathSelectElement("//main/child[@id='1']")!;
+    [TestMethod]
+    public void Attribute_WithXNode_ShouldStillThrowException()
+    {
+        var doc = Shared.GetTestSample();
+        var diff = XDocument.Load(@"TestData\A07_Replace\ReplaceAttribute_WithXNode.xml");
 
-            Patcher.PatchXml(doc, diff);
+        Assert.ThrowsException<InvalidNodeTypeException>(() => Patcher.PatchXml(doc, diff));
+    }
 
-            Assert.IsNull(child.Document);
-            Shared.TestWith(main.Nodes().ToList()[1], node =>
-            {
-                Assert.AreEqual(XmlNodeType.Comment, node.NodeType);
-                Assert.AreEqual(((XComment)node).Value, " Not an Element ");
-            });
-        }
+    [TestMethod]
+    public void Comment()
+    {
+        var doc = Shared.GetTestSample();
+        var diff = XDocument.Load(@"TestData\A09_Replace\ReplaceComment_WithDifferentNodeType.xml");
 
-        [TestMethod]
-        public void Attribute_WithXNode_ShouldStillThrowException()
+        var comment = (XComment)((IEnumerable<object>)doc.XPathEvaluate("//main/comment()[1]")).First();
+
+        Patcher.PatchXml(doc, diff);
+
+        Assert.IsNull(comment.Document);
+        Shared.TestWith(doc.XPathSelectElement("//main")!.FirstNode!, node =>
         {
-            var doc = Shared.GetTestSample();
-            var diff = XDocument.Load(@"TestData\A07_Replace\ReplaceAttribute_WithXNode.xml");
+            Assert.AreEqual(XmlNodeType.Text, node.NodeType);
+            Assert.AreEqual(((XText)node).Value, "Not a Comment");
+        });
+    }
 
-            Assert.ThrowsException<InvalidNodeTypeException>(() => Patcher.PatchXml(doc, diff));
-        }
+    [TestMethod]
+    public void Text()
+    {
+        var doc = Shared.GetTestSample();
+        var diff = XDocument.Load(@"TestData\A11_Replace\ReplaceText_WithDifferentNodeType.xml");
 
-        [TestMethod]
-        public void Comment()
+        var text = (XText)((IEnumerable<object>)doc.XPathEvaluate("//main/child[@id='1']/text()[1]")).First();
+
+        Patcher.PatchXml(doc, diff);
+
+        Assert.IsNull(text.Document);
+        Shared.TestWith(doc.XPathSelectElement("//main/child[@id='1']")!.FirstNode!, node =>
         {
-            var doc = Shared.GetTestSample();
-            var diff = XDocument.Load(@"TestData\A09_Replace\ReplaceComment_WithDifferentNodeType.xml");
-
-            var comment = (XComment)((IEnumerable<object>)doc.XPathEvaluate("//main/comment()[1]")).First();
-
-            Patcher.PatchXml(doc, diff);
-
-            Assert.IsNull(comment.Document);
-            Shared.TestWith(doc.XPathSelectElement("//main")!.FirstNode!, node =>
-            {
-                Assert.AreEqual(XmlNodeType.Text, node.NodeType);
-                Assert.AreEqual(((XText)node).Value, "Not a Comment");
-            });
-        }
-
-        [TestMethod]
-        public void Text()
-        {
-            var doc = Shared.GetTestSample();
-            var diff = XDocument.Load(@"TestData\A11_Replace\ReplaceText_WithDifferentNodeType.xml");
-
-            var text = (XText)((IEnumerable<object>)doc.XPathEvaluate("//main/child[@id='1']/text()[1]")).First();
-
-            Patcher.PatchXml(doc, diff);
-
-            Assert.IsNull(text.Document);
-            Shared.TestWith(doc.XPathSelectElement("//main/child[@id='1']")!.FirstNode!, node =>
-            {
-                Assert.AreEqual(XmlNodeType.Element, node.NodeType);
-                Assert.AreEqual(((XElement)node).Name.LocalName, "not-a-text-node");
-            });
-        }
+            Assert.AreEqual(XmlNodeType.Element, node.NodeType);
+            Assert.AreEqual(((XElement)node).Name.LocalName, "not-a-text-node");
+        });
     }
 }

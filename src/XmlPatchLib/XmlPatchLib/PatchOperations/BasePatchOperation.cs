@@ -15,25 +15,25 @@ namespace Tizuby.XmlPatchLib.PatchOperations
 
     public abstract class BasePatchOperation<T> : IPatchOperation where T : XObject
     {
-        protected readonly XElement OperationNode;
-        protected readonly IPatchOperationOptions Options;
-        protected readonly string XPathExpression;
+        protected readonly XElement operationNode;
+        protected readonly IPatchOperationOptions options;
+        protected readonly string xPathExpression;
 
         protected BasePatchOperation(string sel, XElement operationNode, IPatchOperationOptions options)
         {
-            this.OperationNode = operationNode;
-            this.Options = options;
-            this.XPathExpression = sel;
+            this.operationNode   = operationNode;
+            this.options         = options;
+            this.xPathExpression = sel;
         }
 
         protected abstract void ApplyPatch(T target, IXmlNamespaceResolver nsResolver);
 
         private void ExecuteProcessingInstructions(XDocument sourceDocument, IXmlNamespaceResolver nsResolver)
         {
-            var nodes = ((IEnumerable<object>)this.OperationNode.XPathEvaluate("//processing-instruction()")).Cast<XProcessingInstruction>();
+            var nodes = ((IEnumerable<object>)this.operationNode.XPathEvaluate("//processing-instruction()")).Cast<XProcessingInstruction>();
             foreach (var node in nodes)
             {
-                var pi = ProcessingInstructionsParser.Parse(node, this.Options);
+                var pi = ProcessingInstructionsParser.Parse(node, this.options);
                 pi?.Execute(sourceDocument, nsResolver);
             }
         }
@@ -48,32 +48,30 @@ namespace Tizuby.XmlPatchLib.PatchOperations
         /// </param>
         public void Apply(XDocument sourceDocument, IXmlNamespaceResolver nsResolver = null)
         {
-            var xPathEvaluator = this.Options.XPathEvaluator ?? new DefaultXPathEvaluator();
+            var xPathEvaluator = this.options.XPathEvaluator ?? new DefaultXPathEvaluator();
             if (nsResolver == null)
-                nsResolver = this.OperationNode.Document.GetNamespaceResolver();
+                nsResolver = this.operationNode.Document.GetNamespaceResolver();
 
-            if (this.Options.UseProcessingInstrutions)
+            if (this.options.UseProcessingInstrutions)
                 this.ExecuteProcessingInstructions(sourceDocument, nsResolver);
 
             try
             {
-                if (!this.Options.AllowMultiNodeSelectors)
+                if (!this.options.AllowMultiNodeSelectors)
                 {
-                    var target = xPathEvaluator.SelectSingle<T>(sourceDocument, this.XPathExpression, nsResolver);
+                    var target = xPathEvaluator.SelectSingle<T>(sourceDocument, this.xPathExpression, nsResolver);
                     this.ApplyPatch(target, nsResolver);
                 }
                 else
                 {
-                    var targets = xPathEvaluator.SelectAll<T>(sourceDocument, this.XPathExpression, nsResolver);
+                    var targets = xPathEvaluator.SelectAll<T>(sourceDocument, this.xPathExpression, nsResolver);
                     foreach (var target in targets)
-                    {
                         this.ApplyPatch(target, nsResolver);
-                    }
                 }
             }
             catch (UnlocatedNodeException ex)
             {
-                ex.Source = $"<{this.OperationNode.Name} {string.Join(" ", this.OperationNode.Attributes().Select(x => x.ToString()))}>";
+                ex.Source = $"<{this.operationNode.Name} {string.Join(" ", this.operationNode.Attributes().Select(x => x.ToString()))}>";
                 throw;
             }
         }

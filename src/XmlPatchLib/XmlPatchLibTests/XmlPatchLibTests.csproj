@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-	  <None Update="$(ProjectDir)TestData\**\*.xml" CopyToOutputDirectory="Always" />
+    <None Update="$(ProjectDir)TestData\**\*.xml" CopyToOutputDirectory="Always" />
   </ItemGroup>
 
   <Target Name="RemoveOldTestResults" AfterTargets="AfterBuild">

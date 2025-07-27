@@ -18,9 +18,9 @@ namespace Tizuby.XmlPatchLib.ProcessingInstructions
         /// <param name="xPathEvaluator"></param>
         public CopyNode(string sel, XNode destination, IXPathEvaluator xPathEvaluator)
         {
-            this._destination = destination;
+            this._destination     = destination;
             this._xPathExpression = sel;
-            this._xPathEvaluator = xPathEvaluator ?? new DefaultXPathEvaluator();
+            this._xPathEvaluator  = xPathEvaluator ?? new DefaultXPathEvaluator();
         }
 
         public void Execute(XDocument sourceDocument, IXmlNamespaceResolver nsResolver = null)

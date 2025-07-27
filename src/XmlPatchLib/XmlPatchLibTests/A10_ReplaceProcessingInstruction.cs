@@ -5,48 +5,47 @@ using Tizuby.XmlPatchLib;
 
 // ReSharper disable InconsistentNaming
 
-namespace XmlPatchLibTests
+namespace XmlPatchLibTests;
+
+/// <summary>
+///     https://datatracker.ietf.org/doc/html/rfc5261#appendix-A.10
+/// </summary>
+[TestClass]
+[TestCategory("<replace>")]
+public class A10_ReplaceProcessingInstruction
 {
-    /// <summary>
-    ///     https://datatracker.ietf.org/doc/html/rfc5261#appendix-A.10
-    /// </summary>
-    [TestClass]
-    [TestCategory("<replace>")]
-    public class A10_ReplaceProcessingInstruction
+    [TestMethod]
+    public void ExistingProcessingInstruction()
     {
-        [TestMethod]
-        public void ExistingProcessingInstruction()
+        var doc = Shared.GetTestSample();
+        var diff = XDocument.Load(@"TestData\A10_Replace\ReplaceProcessingInstruction.xml");
+
+        Shared.Patcher.PatchXml(doc, diff);
+
+        var res = doc.XPathEvaluate("/original/processing-instruction()");
+        Assert.IsInstanceOfType<IEnumerable>(res);
+        Shared.TestWith(((IEnumerable)res).Cast<XProcessingInstruction>().ToList(), processingInstructions =>
         {
-            var doc = Shared.GetTestSample();
-            var diff = XDocument.Load(@"TestData\A10_Replace\ReplaceProcessingInstruction.xml");
+            Assert.AreEqual(1, processingInstructions.Count);
+            Assert.AreEqual("bar=\"foo\"", processingInstructions[0].Data);
+        });
+    }
 
-            Shared.Patcher.PatchXml(doc, diff);
+    [TestMethod]
+    public void MissingProcessingInstruction_ShouldThrowException()
+    {
+        var doc = Shared.GetTestSample();
+        var diff = XDocument.Load(@"TestData\A10_Replace\ReplaceProcessingInstruction_Missing.xml");
 
-            var res = doc.XPathEvaluate("/original/processing-instruction()");
-            Assert.IsInstanceOfType<IEnumerable>(res);
-            Shared.TestWith(((IEnumerable)res).Cast<XProcessingInstruction>().ToList(), processingInstructions =>
-            {
-                Assert.AreEqual(1, processingInstructions.Count);
-                Assert.AreEqual("bar=\"foo\"", processingInstructions[0].Data);
-            });
-        }
+        Assert.ThrowsException<UnlocatedNodeException>(() => Shared.Patcher.PatchXml(doc, diff));
+    }
 
-        [TestMethod]
-        public void MissingProcessingInstruction_ShouldThrowException()
-        {
-            var doc = Shared.GetTestSample();
-            var diff = XDocument.Load(@"TestData\A10_Replace\ReplaceProcessingInstruction_Missing.xml");
+    [TestMethod]
+    public void WithDifferentNodeType_ShouldThrowException()
+    {
+        var doc = Shared.GetTestSample();
+        var diff = XDocument.Load(@"TestData\A10_Replace\ReplaceProcessingInstruction_WithDifferentNodeType.xml");
 
-            Assert.ThrowsException<UnlocatedNodeException>(() => Shared.Patcher.PatchXml(doc, diff));
-        }
-
-        [TestMethod]
-        public void WithDifferentNodeType_ShouldThrowException()
-        {
-            var doc = Shared.GetTestSample();
-            var diff = XDocument.Load(@"TestData\A10_Replace\ReplaceProcessingInstruction_WithDifferentNodeType.xml");
-
-            Assert.ThrowsException<InvalidNodeTypeException>(() => Shared.Patcher.PatchXml(doc, diff));
-        }
+        Assert.ThrowsException<InvalidNodeTypeException>(() => Shared.Patcher.PatchXml(doc, diff));
     }
 }
