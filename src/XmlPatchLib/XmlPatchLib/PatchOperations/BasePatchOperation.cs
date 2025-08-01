@@ -64,7 +64,10 @@ namespace Tizuby.XmlPatchLib.PatchOperations
                 }
                 else
                 {
-                    var targets = xPathEvaluator.SelectAll<T>(sourceDocument, this.xPathExpression, nsResolver);
+                    var targets = xPathEvaluator.SelectAll<T>(sourceDocument, this.xPathExpression, nsResolver).ToList();
+                    if (targets.Count == 0)
+                        throw new UnlocatedNodeException("XPath evaluation returned no matching nodes.");
+
                     foreach (var target in targets)
                         this.ApplyPatch(target, nsResolver);
                 }
